@@ -21,6 +21,9 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "scheme": "azertur"
+    "scheme": "azertur",
+    "plugins": [
+      "expo-secure-store"
+    ]
   }
 }
