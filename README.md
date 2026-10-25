@@ -19,3 +19,7 @@ npx expo export --platform android --output-dir dist
 ```
 
 This export checks Metro/native JavaScript bundling; it does not produce or verify an APK or IPA. Use a compatible Node LTS (22.13+ within Node 22); `.nvmrc` and CI select Node 22. See [architecture](docs/ARCHITECTURE.md).
+
+## Customer review workflow update
+
+The customer registration, durable reservation request, office approval and demo-payment flows are now implemented. See [the current architecture, API and remaining production work](docs/ARCHITECTURE.md); that document supersedes the initial foundation-only notes above. No cloud deployment or live payment/provider connection is included.
