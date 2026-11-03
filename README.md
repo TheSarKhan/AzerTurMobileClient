@@ -27,3 +27,7 @@ The customer registration, durable reservation request, office approval and demo
 ## Notifications update
 
 The account screen now includes in-app notifications, ownership-scoped read state and an explicit push-permission/register/disable control. See [setup and device-build requirements](docs/NOTIFICATIONS.md). Run `npm run lint` and `npm run typecheck` on Node 22. Native push needs EAS/APNs/FCM configuration and device validation; no actual push was sent during QA.
+
+## Account security and paid changes
+
+Email verification, password recovery and session revocation now protect customer writes. Paid changes use a separately reviewed proposal and exact PDF acceptance before the effective booking changes. See [setup, workflow and verification](docs/ACCOUNT_SECURITY_AMENDMENTS.md). This work is stacked on `feature/complete-office-workflows`; live delivery still needs the configured server SMTP environment.
