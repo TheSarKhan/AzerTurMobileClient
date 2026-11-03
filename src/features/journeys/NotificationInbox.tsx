@@ -230,9 +230,9 @@ export default function NotificationInbox({
           } catch {
             setMessage(
               t(
-                "Push could not be enabled. Please retry on a configured device build.",
-                "Не удалось включить push. Повторите в настроенной сборке на устройстве.",
-                "Push aktiv olmadı. Hazırlanmış cihaz tətbiqində yenidən yoxlayın.",
+                "Push could not be enabled. Try again or contact our team.",
+                "Не удалось включить push. Повторите попытку или свяжитесь с нами.",
+                "Push aktiv olmadı. Yenidən yoxlayın və ya komandamızla əlaqə saxlayın.",
               ),
             );
           } finally {
