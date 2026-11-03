@@ -65,6 +65,26 @@ export default function NotificationInbox({
     [token],
   );
   const labels: Record<string, string> = {
+    AMENDMENT_SENT: t(
+      "A change proposal is ready",
+      "Предложение изменения готово",
+      "Dəyişiklik təklifi hazırdır",
+    ),
+    AMENDMENT_ACCEPTED: t(
+      "Changes accepted",
+      "Изменения приняты",
+      "Dəyişikliklər təsdiqlənib",
+    ),
+    AMENDMENT_DECLINED: t(
+      "Proposal declined",
+      "Предложение отклонено",
+      "Təklif rədd edilib",
+    ),
+    AMENDMENT_REFUND_UPDATED: t(
+      "Refund tracking updated",
+      "Статус возврата обновлён",
+      "Geri ödəniş vəziyyəti yenilənib",
+    ),
     OFFER_SENT: t(
       "Your offer is ready",
       "Предложение готово",

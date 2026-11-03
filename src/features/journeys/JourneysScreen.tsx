@@ -1,4 +1,5 @@
-import {demoRequestKey} from "../../api/request-key";
+import AccountSecurity, { JourneyChangeLink } from "./AccountSecurity";
+import { demoRequestKey } from "../../api/request-key";
 import NotificationInbox from "./NotificationInbox";
 import React, { useEffect, useState } from "react";
 import {
@@ -151,7 +152,10 @@ export function JourneysScreen() {
     }
   }
   useEffect(() => {
-    void Promise.resolve().then(()=>{void load();void restore();});
+    void Promise.resolve().then(() => {
+      void load();
+      void restore();
+    });
     // Initial catalogue and secure session restore run once on mount.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -258,6 +262,38 @@ export function JourneysScreen() {
           "Rezervasiya sorğusu üçün qeydiyyat vacibdir.",
         )}
       </Text>
+      <Pressable
+        accessibilityRole="button"
+        disabled={busy || !email.includes("@")}
+        onPress={async () => {
+          setBusy(true);
+          setError("");
+          try {
+            await request("auth/forgot-password", { email });
+            setNotice(
+              t(
+                "If the account exists, a recovery link will be emailed. Check spam too.",
+                "Если аккаунт существует, ссылка будет отправлена. Проверьте спам.",
+                "Hesab mövcuddursa, emailə bərpa linki göndəriləcək. Spamı da yoxla.",
+              ),
+            );
+          } catch {
+            setError(
+              t("Try again later.", "Повторите позже.", "Sonra yenidən yoxla."),
+            );
+          } finally {
+            setBusy(false);
+          }
+        }}
+      >
+        <Text>
+          {t(
+            "Forgot password? Enter email above.",
+            "Забыли пароль? Введите email выше.",
+            "Şifrəni unutmusan? Emaili yuxarıda daxil et.",
+          )}
+        </Text>
+      </Pressable>
       {register && (
         <>
           <Text style={s.label}>
@@ -609,7 +645,23 @@ export function JourneysScreen() {
           <View style={s.planner}>
             <Text style={s.section}>{customer.name}</Text>
             <Text>{customer.email}</Text>
-            {token&&<NotificationInbox token={token} locale={locale}/>}
+            {token && (
+              <AccountSecurity
+                token={token}
+                customer={customer}
+                locale={locale}
+                onSignedOut={async () => {
+                  await clearSession();
+                  setToken(null);
+                  setCustomer(null);
+                  setItems([]);
+                  setRequests([]);
+                  setQuote(null);
+                  setPassword("");
+                }}
+              />
+            )}
+            {token && <NotificationInbox token={token} locale={locale} />}
             <Pressable
               accessibilityRole="button"
               style={s.secondary}
@@ -723,6 +775,7 @@ export function JourneysScreen() {
                     }
                   })()}
                 </Text>
+                <JourneyChangeLink bookingId={b.id} locale={locale} />
                 <Text style={s.status}>{status(b.status)}</Text>
                 <Text>
                   {b.departure} · {amount(b.total, b.currency)}
