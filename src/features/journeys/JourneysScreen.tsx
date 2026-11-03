@@ -1,3 +1,5 @@
+import {demoRequestKey} from "../../api/request-key";
+import NotificationInbox from "./NotificationInbox";
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -149,8 +151,9 @@ export function JourneysScreen() {
     }
   }
   useEffect(() => {
-    void load();
-    void restore();
+    void Promise.resolve().then(()=>{void load();void restore();});
+    // Initial catalogue and secure session restore run once on mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   async function price() {
     if (!selected || busy) return;
@@ -224,7 +227,7 @@ export function JourneysScreen() {
           success,
         },
         token,
-        Date.now() + "-" + Math.random().toString(36).slice(2) + "-" + b.id,
+        demoRequestKey(b.id),
       );
       setNotice(
         t(
@@ -606,6 +609,7 @@ export function JourneysScreen() {
           <View style={s.planner}>
             <Text style={s.section}>{customer.name}</Text>
             <Text>{customer.email}</Text>
+            {token&&<NotificationInbox token={token} locale={locale}/>}
             <Pressable
               accessibilityRole="button"
               style={s.secondary}
