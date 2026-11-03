@@ -23,3 +23,7 @@ This export checks Metro/native JavaScript bundling; it does not produce or veri
 ## Customer review workflow update
 
 The customer registration, durable reservation request, office approval and demo-payment flows are now implemented. See [the current architecture, API and remaining production work](docs/ARCHITECTURE.md); that document supersedes the initial foundation-only notes above. No cloud deployment or live payment/provider connection is included.
+
+## Notifications update
+
+The account screen now includes in-app notifications, ownership-scoped read state and an explicit push-permission/register/disable control. See [setup and device-build requirements](docs/NOTIFICATIONS.md). Run `npm run lint` and `npm run typecheck` on Node 22. Native push needs EAS/APNs/FCM configuration and device validation; no actual push was sent during QA.
