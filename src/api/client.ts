@@ -1,7 +1,7 @@
 import { Platform } from "react-native";
 export type Locale = "en" | "ru" | "az";
 export type Currency = "EUR" | "USD" | "AZN";
-const base = (
+export const apiBase = (
   process.env.EXPO_PUBLIC_API_BASE_URL ||
   (Platform.OS === "android" ? "http://10.0.2.2:8080" : "http://localhost:8080")
 ).replace(/\/$/, "");
@@ -76,7 +76,7 @@ export async function request<T>(
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15000);
   try {
-    const r = await fetch(base + "/api/v1/" + path, {
+    const r = await fetch(apiBase + "/api/v1/" + path, {
       method: body === undefined ? "GET" : "POST",
       headers: {
         "Content-Type": "application/json",

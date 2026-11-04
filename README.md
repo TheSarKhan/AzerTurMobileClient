@@ -35,3 +35,7 @@ Email verification, password recovery and session revocation now protect custome
 ## Native design implementation — phase 1
 
 The entry now uses Expo Router. Discovery, search/filter, saved journeys and tour detail use the approved visual language and the live backend catalogue. Existing account/trips/request flows remain reachable during migration. See [implemented scope, ticket decisions and checks](docs/NATIVE_FOUNDATION.md). This is the first development slice, not the complete 46-screen app.
+
+## Current native customer workflows
+
+The account/trips/planner bridge has been replaced by routed approved screens, including current contract/amendment review, service cancellations/refunds and original travel documents. See [docs/CUSTOMER_WORKFLOWS.md](docs/CUSTOMER_WORKFLOWS.md) for implementation scope and device/release checks. Native PDF viewing requires an internal/custom build (`eas build --profile preview`), not Expo Go.

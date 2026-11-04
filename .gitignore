@@ -12,3 +12,5 @@ dist/
 
 expo-env.d.ts
 # @end expo-cli
+# Generated from the locked pdfjs-dist version by postinstall
+/public/pdf.worker.min.mjs

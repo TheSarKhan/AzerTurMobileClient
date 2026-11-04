@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Pressable, StyleSheet, Linking } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
+import { colors, heading } from "../../design/theme";
 import { request, type Customer, type Locale } from "../../api/client";
 type Session = {
   id: string;
@@ -104,6 +105,39 @@ export default function AccountSecurity({
           ),
           () => void act("auth/email-verification/request"),
         )}
+      <Text style={s.title}>{t("Password", "Пароль", "Şifrə")}</Text>
+      {button(
+        t(
+          "Send password reset link",
+          "Отправить ссылку сброса",
+          "Şifrə yeniləmə keçidi göndər",
+        ),
+        () =>
+          void (async () => {
+            setBusy(true);
+            setError("");
+            try {
+              await request("auth/forgot-password", { email: customer.email });
+              setNotice(
+                t(
+                  "Check your email. Resetting your password signs out all devices.",
+                  "Проверьте почту. Сброс пароля завершит все сеансы.",
+                  "Emailinizi yoxlayın. Şifrə yenilənəndə bütün cihazlardan çıxış edilir.",
+                ),
+              );
+            } catch {
+              setError(
+                t(
+                  "Try again later.",
+                  "Повторите позже.",
+                  "Sonra yenidən yoxlayın.",
+                ),
+              );
+            } finally {
+              setBusy(false);
+            }
+          })(),
+      )}
       <Text style={s.title}>
         {t("Active sessions", "Активные сеансы", "Aktiv sessiyalar")}
       </Text>
@@ -140,88 +174,22 @@ export default function AccountSecurity({
     </View>
   );
 }
-export function JourneyChangeLink({
-  bookingId,
-  locale: l,
-}: {
-  bookingId: string;
-  locale: Locale;
-}) {
-  const [error, setError] = useState(false);
-  const origin = process.env.EXPO_PUBLIC_WEB_ORIGIN;
-  const label =
-    l === "az"
-      ? "Dəyişiklik təklifinə bax"
-      : l === "ru"
-        ? "Предложение изменения"
-        : "Review change proposal";
-  return (
-    <View>
-      <Pressable
-        accessibilityRole="link"
-        style={s.button}
-        onPress={async () => {
-          try {
-            if (!origin) throw Error();
-            const url = new URL(origin);
-            if (
-              url.username ||
-              url.password ||
-              url.search ||
-              url.hash ||
-              url.pathname !== "/" ||
-              !(
-                url.protocol === "https:" ||
-                (url.protocol === "http:" &&
-                  ["localhost", "127.0.0.1", "10.0.2.2"].includes(url.hostname))
-              )
-            )
-              throw Error();
-            await Linking.openURL(
-              url.origin +
-                "/" +
-                l +
-                "/trips/" +
-                encodeURIComponent(bookingId) +
-                "/changes",
-            );
-          } catch {
-            setError(true);
-          }
-        }}
-      >
-        <Text style={s.buttonText}>{label}</Text>
-      </Pressable>
-      <Text>
-        {l === "az"
-          ? "PDF və məbləğlər təhlükəsiz veb kabinetdə açılır. Veb hesabına giriş tələb oluna bilər."
-          : l === "ru"
-            ? "PDF и суммы открываются в защищённом веб-кабинете. Может потребоваться вход."
-            : "PDF and amounts open in the secure web account. You may need to sign in."}
-      </Text>
-      {!!error && (
-        <Text accessibilityRole="alert">
-          {l === "az"
-            ? "Veb kabinet hazırda əlçatan deyil."
-            : l === "ru"
-              ? "Веб-кабинет пока недоступен."
-              : "Web account is currently unavailable."}
-        </Text>
-      )}
-    </View>
-  );
-}
 const s = StyleSheet.create({
   card: { gap: 16, marginTop: 24 },
-  title: { fontSize: 20, fontWeight: "600", color: "#113c30" },
+  title: {
+    fontSize: 27,
+    fontFamily: heading,
+    fontWeight: "600",
+    color: colors.ink,
+  },
   button: {
     padding: 14,
     borderWidth: 1,
     borderColor: "#a7bbb2",
-    borderRadius: 5,
+    borderRadius: 9,
     marginVertical: 8,
   },
-  buttonText: { color: "#075446", fontWeight: "600" },
+  buttonText: { color: colors.ink, fontFamily: "InterSemi", fontWeight: "600" },
   session: {
     paddingVertical: 14,
     borderBottomWidth: 1,

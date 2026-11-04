@@ -4,6 +4,7 @@ import { useFonts } from "expo-font";
 import Feather from "@expo/vector-icons/Feather";
 import { ActivityIndicator, View, Text } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { AccountProvider } from "../state/account";
 import { DiscoveryProvider } from "../state/discovery";
 import { colors } from "../design/theme";
 export default function Root() {
@@ -32,13 +33,15 @@ export default function Root() {
     );
   return (
     <DiscoveryProvider>
-      <StatusBar style="dark" />
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: colors.paper },
-        }}
-      />
+      <AccountProvider>
+        <StatusBar style="dark" />
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: colors.paper },
+          }}
+        />
+      </AccountProvider>
     </DiscoveryProvider>
   );
 }
