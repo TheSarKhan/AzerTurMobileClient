@@ -31,3 +31,7 @@ The account screen now includes in-app notifications, ownership-scoped read stat
 ## Account security and paid changes
 
 Email verification, password recovery and session revocation now protect customer writes. Paid changes use a separately reviewed proposal and exact PDF acceptance before the effective booking changes. See [setup, workflow and verification](docs/ACCOUNT_SECURITY_AMENDMENTS.md). This work is stacked on `feature/complete-office-workflows`; live delivery still needs the configured server SMTP environment.
+
+## Native design implementation — phase 1
+
+The entry now uses Expo Router. Discovery, search/filter, saved journeys and tour detail use the approved visual language and the live backend catalogue. Existing account/trips/request flows remain reachable during migration. See [implemented scope, ticket decisions and checks](docs/NATIVE_FOUNDATION.md). This is the first development slice, not the complete 46-screen app.

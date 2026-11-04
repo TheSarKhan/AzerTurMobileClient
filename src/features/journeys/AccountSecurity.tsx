@@ -135,8 +135,8 @@ export default function AccountSecurity({
         t("Sign out everywhere", "Выйти везде", "Bütün cihazlardan çıx"),
         () => void act("auth/logout-all"),
       )}
-      {notice && <Text accessibilityLiveRegion="polite">{notice}</Text>}
-      {error && <Text accessibilityRole="alert">{error}</Text>}
+      {!!notice && <Text accessibilityLiveRegion="polite">{notice}</Text>}
+      {!!error && <Text accessibilityRole="alert">{error}</Text>}
     </View>
   );
 }
@@ -199,7 +199,7 @@ export function JourneyChangeLink({
             ? "PDF и суммы открываются в защищённом веб-кабинете. Может потребоваться вход."
             : "PDF and amounts open in the secure web account. You may need to sign in."}
       </Text>
-      {error && (
+      {!!error && (
         <Text accessibilityRole="alert">
           {l === "az"
             ? "Veb kabinet hazırda əlçatan deyil."
