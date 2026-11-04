@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import AccountSecurity, { JourneyChangeLink } from "./AccountSecurity";
 import { demoRequestKey } from "../../api/request-key";
 import NotificationInbox from "./NotificationInbox";
@@ -27,12 +28,22 @@ import {
   type Currency,
 } from "../../api/client";
 import { readSession, saveSession, clearSession } from "../../api/session";
-export function JourneysScreen() {
-  const [locale, setLocale] = useState<Locale>("az"),
+export function JourneysScreen({
+  initialScreen = "journeys",
+  initialLocale = "en",
+  initialTourSlug,
+  embedded = false,
+}: {
+  initialScreen?: "journeys" | "trips" | "account";
+  initialLocale?: Locale;
+  initialTourSlug?: string;
+  embedded?: boolean;
+} = {}) {
+  const [locale, setLocale] = useState<Locale>(initialLocale),
     [currency, setCurrency] = useState<Currency>("EUR"),
     [screen, setScreen] = useState<
       "journeys" | "trips" | "account" | "checkout"
-    >("journeys"),
+    >(initialScreen),
     [list, setList] = useState<Tour[]>([]),
     [loading, setLoading] = useState(true),
     [error, setError] = useState(""),
@@ -82,6 +93,12 @@ export function JourneysScreen() {
       { style: "currency", currency: c, maximumFractionDigits: 0 },
     ).format(n);
   function problem(e: unknown) {
+    if (e instanceof ApiError && e.code === "EMAIL_VERIFICATION_REQUIRED")
+      return t(
+        "Verify your email in Account before continuing.",
+        "Подтвердите email в аккаунте.",
+        "Davam etmək üçün Hesab bölməsində emailini təsdiqlə.",
+      );
     if (e instanceof ApiError && e.code === "DEMO_PAYMENT_FAILED")
       return t(
         "Demo payment failed. Nothing was charged.",
@@ -104,7 +121,10 @@ export function JourneysScreen() {
     setLoading(true);
     setError("");
     try {
-      setList(await getTours());
+      const catalog = await getTours();
+      setList(catalog);
+      if (initialTourSlug)
+        setSelected(catalog.find((x) => x.slug === initialTourSlug) || null);
     } catch (e) {
       setError(problem(e));
     } finally {
@@ -140,6 +160,7 @@ export function JourneysScreen() {
       setToken(saved);
       setCustomer(c);
       setLocale(c.locale);
+      if (initialScreen === "trips") await loadTrips(saved);
     } catch (e) {
       if (e instanceof ApiError && e.status === 401) {
         await clearSession();
@@ -185,9 +206,10 @@ export function JourneysScreen() {
       setToken(session.token);
       setCustomer(session.customer);
       setPassword("");
-      if (quote) setScreen("checkout");
+      if (!session.customer.emailVerified) navigate("account");
+      else if (quote) navigate("checkout");
       else {
-        setScreen("trips");
+        navigate("trips");
         await loadTrips(session.token);
       }
     } catch (e) {
@@ -204,7 +226,7 @@ export function JourneysScreen() {
       await request("bookings", { quoteId: quote.id, note }, token);
       setQuote(null);
       setNote("");
-      setScreen("trips");
+      navigate("trips");
       setNotice(
         t(
           "Your request is waiting for operator review.",
@@ -247,6 +269,11 @@ export function JourneysScreen() {
     } finally {
       setBusy(false);
     }
+  }
+  function navigate(next: typeof screen) {
+    if (embedded && (next === "trips" || next === "account"))
+      router.navigate(next === "trips" ? "/trips" : "/account");
+    else setScreen(next);
   }
   const authForm = (
     <View style={s.planner}>
@@ -424,32 +451,34 @@ export function JourneysScreen() {
           ))}
         </View>
       </View>
-      <View style={s.nav}>
-        {[
-          ["journeys", t("Journeys", "Туры", "Turlar")],
-          ["trips", t("My trips", "Мои поездки", "Səfərlərim")],
-          ["account", t("Account", "Аккаунт", "Hesab")],
-        ].map(([key, label]) => (
-          <Pressable
-            key={key}
-            accessibilityRole="button"
-            style={[s.navItem, screen === key && s.active]}
-            onPress={() => {
-              setScreen(key as typeof screen);
-              setError("");
-              if (key === "trips") void loadTrips();
-            }}
-          >
-            <Text>{label}</Text>
-          </Pressable>
-        ))}
-      </View>
+      {!embedded && (
+        <View style={s.nav}>
+          {[
+            ["journeys", t("Journeys", "Туры", "Turlar")],
+            ["trips", t("My trips", "Мои поездки", "Səfərlərim")],
+            ["account", t("Account", "Аккаунт", "Hesab")],
+          ].map(([key, label]) => (
+            <Pressable
+              key={key}
+              accessibilityRole="button"
+              style={[s.navItem, screen === key && s.active]}
+              onPress={() => {
+                navigate(key as typeof screen);
+                setError("");
+                if (key === "trips") void loadTrips();
+              }}
+            >
+              <Text>{label}</Text>
+            </Pressable>
+          ))}
+        </View>
+      )}
       {error ? (
         <View style={s.error}>
           <Text accessibilityRole="alert">{error}</Text>
         </View>
       ) : null}
-      {notice && <Text style={s.notice}>{notice}</Text>}
+      {!!notice && <Text style={s.notice}>{notice}</Text>}
       {screen === "journeys" && (
         <>
           <Text accessibilityRole="header" style={s.title}>
@@ -474,33 +503,35 @@ export function JourneysScreen() {
               <Text>{t("Try again", "Повторить", "Yenidən yoxla")}</Text>
             </Pressable>
           )}
-          {list.map((tour) => (
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={tour.titleEn}
-              key={tour.slug}
-              style={[s.card, selected?.slug === tour.slug && s.chosen]}
-              onPress={() => {
-                setSelected(tour);
-                setQuote(null);
-              }}
-            >
-              <Text style={s.region}>
-                {tour.region} · {tour.days} {t("days", "дн.", "gün")}
-              </Text>
-              <Text style={s.name}>
-                {locale === "az"
-                  ? tour.titleAz
-                  : locale === "ru"
-                    ? tour.titleRu
-                    : tour.titleEn}
-              </Text>
-              <Text style={s.from}>
-                {t("From", "От", "Başlayan qiymət")} €{tour.fromPriceEur} /{" "}
-                {t("person", "чел.", "nəfər")} ↗
-              </Text>
-            </Pressable>
-          ))}
+          {list
+            .filter((tour) => !initialTourSlug || tour.slug === initialTourSlug)
+            .map((tour) => (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={tour.titleEn}
+                key={tour.slug}
+                style={[s.card, selected?.slug === tour.slug && s.chosen]}
+                onPress={() => {
+                  setSelected(tour);
+                  setQuote(null);
+                }}
+              >
+                <Text style={s.region}>
+                  {tour.region} · {tour.days} {t("days", "дн.", "gün")}
+                </Text>
+                <Text style={s.name}>
+                  {locale === "az"
+                    ? tour.titleAz
+                    : locale === "ru"
+                      ? tour.titleRu
+                      : tour.titleEn}
+                </Text>
+                <Text style={s.from}>
+                  {t("From", "От", "Başlayan qiymət")} €{tour.fromPriceEur} /{" "}
+                  {t("person", "чел.", "nəfər")} ↗
+                </Text>
+              </Pressable>
+            ))}
           {selected && (
             <View style={s.planner}>
               <Text accessibilityRole="header" style={s.section}>
@@ -624,7 +655,7 @@ export function JourneysScreen() {
                   <Pressable
                     accessibilityRole="button"
                     style={s.button}
-                    onPress={() => setScreen(customer ? "checkout" : "account")}
+                    onPress={() => navigate(customer ? "checkout" : "account")}
                   >
                     <Text style={s.buttonText}>
                       {t(
@@ -645,7 +676,7 @@ export function JourneysScreen() {
           <View style={s.planner}>
             <Text style={s.section}>{customer.name}</Text>
             <Text>{customer.email}</Text>
-            {token && (
+            {!!token && (
               <AccountSecurity
                 token={token}
                 customer={customer}
@@ -661,7 +692,7 @@ export function JourneysScreen() {
                 }}
               />
             )}
-            {token && <NotificationInbox token={token} locale={locale} />}
+            {!!token && <NotificationInbox token={token} locale={locale} />}
             <Pressable
               accessibilityRole="button"
               style={s.secondary}

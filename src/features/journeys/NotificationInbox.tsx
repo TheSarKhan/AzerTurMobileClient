@@ -124,7 +124,7 @@ export default function NotificationInbox({
       >
         <Text>{t("Refresh updates", "Обновить", "Yenilikləri yenilə")}</Text>
       </Pressable>
-      {message && <Text accessibilityRole="alert">{message}</Text>}
+      {!!message && <Text accessibilityRole="alert">{message}</Text>}
       {rows.slice(0, 20).map((n) => (
         <Pressable
           accessibilityRole="button"
