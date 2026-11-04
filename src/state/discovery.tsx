@@ -7,6 +7,7 @@ import React, {
   type PropsWithChildren,
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import type { PlannerDraft } from "./planner";
 import { getTours, type Tour, type Locale } from "../api/client";
 type Filter = {
   region: "all" | "nature" | "culture" | "city";
@@ -23,6 +24,7 @@ function useDiscoveryState() {
     [filter, setFilter] = useState<Filter>(empty),
     [storageError, setStorageError] = useState(false),
     [ready, setReady] = useState(false);
+  const [planner, setPlanner] = useState<PlannerDraft | null>(null);
   const pending = useRef(false),
     writes = useRef(Promise.resolve());
   async function load() {
@@ -94,6 +96,8 @@ function useDiscoveryState() {
     );
   return {
     tours,
+    planner,
+    setPlanner,
     loading,
     error,
     load,

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Pressable, StyleSheet, Platform } from "react-native";
+import { router } from "expo-router";
+import { colors, heading } from "../../design/theme";
 import Constants from "expo-constants";
 import * as SecureStore from "expo-secure-store";
 import { request, type Locale } from "../../api/client";
@@ -20,6 +22,7 @@ export default function NotificationInbox({
   const t = (en: string, ru: string, az: string) =>
     l === "az" ? az : l === "ru" ? ru : en;
   const [rows, setRows] = useState<Notice[]>([]),
+    [onlyUnread, setOnlyUnread] = useState(false),
     [busy, setBusy] = useState(false),
     [message, setMessage] = useState(""),
     [push, setPush] = useState<string | null>(null);
@@ -65,6 +68,11 @@ export default function NotificationInbox({
     [token],
   );
   const labels: Record<string, string> = {
+    TRAVEL_DOCUMENT_PUBLISHED: t(
+      "Your original travel document is ready",
+      "Оригинал документа готов",
+      "Orijinal səfər sənədiniz hazırdır",
+    ),
     AMENDMENT_SENT: t(
       "A change proposal is ready",
       "Предложение изменения готово",
@@ -125,27 +133,33 @@ export default function NotificationInbox({
         <Text>{t("Refresh updates", "Обновить", "Yenilikləri yenilə")}</Text>
       </Pressable>
       {!!message && <Text accessibilityRole="alert">{message}</Text>}
-      {rows.slice(0, 20).map((n) => (
+      <View style={{ flexDirection: "row", gap: 12 }}>
         <Pressable
           accessibilityRole="button"
-          key={n.id}
-          style={[s.item, !n.read_at && s.unread]}
+          style={s.button}
+          onPress={() => setOnlyUnread(!onlyUnread)}
+        >
+          <Text>
+            {onlyUnread
+              ? t("Unread", "Непрочитанные", "Oxunmamış")
+              : t("All", "Все", "Hamısı")}
+          </Text>
+        </Pressable>
+        <Pressable
+          accessibilityRole="button"
+          style={s.button}
           disabled={busy}
           onPress={async () => {
             setBusy(true);
             try {
-              await request(
-                "bookings/notifications/" + n.id + "/read",
-                {},
-                token,
-              );
+              await request("bookings/notifications/read-all", {}, token);
               await load();
             } catch {
               setMessage(
                 t(
-                  "Could not mark as read.",
-                  "Не удалось отметить прочитанным.",
-                  "Oxunmuş kimi qeyd edilmədi.",
+                  "Could not update notifications.",
+                  "Не удалось обновить.",
+                  "Bildirişlər yenilənmədi.",
                 ),
               );
             } finally {
@@ -153,29 +167,99 @@ export default function NotificationInbox({
             }
           }}
         >
-          <Text style={s.label}>
-            {labels[n.event] ||
-              t(
-                "Your journey has an update",
-                "Поездка обновлена",
-                "Səfərinizdə yenilik var",
-              )}
-          </Text>
           <Text>
-            {new Date(n.created_at).toLocaleString(l)} · #
-            {n.booking_id?.slice(0, 8)}
-          </Text>
-          <Text>
-            {n.read_at
-              ? t("Read", "Прочитано", "Oxunub")
-              : t(
-                  "Tap to mark as read",
-                  "Нажмите, чтобы прочитать",
-                  "Oxunmuş etmək üçün toxunun",
-                )}
+            {t("Mark all read", "Прочитать все", "Hamısını oxunmuş et")}
           </Text>
         </Pressable>
-      ))}
+      </View>
+      {rows
+        .filter((n) => !onlyUnread || !n.read_at)
+        .slice(0, 200)
+        .map((n) => (
+          <Pressable
+            accessibilityRole="button"
+            key={n.id}
+            style={[s.item, !n.read_at && s.unread]}
+            disabled={busy}
+            onPress={async () => {
+              setBusy(true);
+              try {
+                await request(
+                  "bookings/notifications/" + n.id + "/read",
+                  {},
+                  token,
+                );
+                await load();
+                if (n.booking_id) {
+                  const id = n.booking_id;
+                  const target =
+                    n.event === "TRAVEL_DOCUMENT_PUBLISHED"
+                      ? {
+                          pathname: "/documents" as const,
+                          params: { booking: id },
+                        }
+                      : n.event.includes("CONTRACT")
+                        ? {
+                            pathname: "/trip/contract" as const,
+                            params: { id },
+                          }
+                        : n.event.includes("AMENDMENT")
+                          ? {
+                              pathname: "/trip/changes" as const,
+                              params: { id },
+                            }
+                          : n.event.includes("REFUND")
+                            ? {
+                                pathname: "/trip/refunds" as const,
+                                params: { id },
+                              }
+                            : n.event.includes("PAYMENT")
+                              ? {
+                                  pathname: "/trip/payments" as const,
+                                  params: { id },
+                                }
+                              : {
+                                  pathname: "/trip/[id]" as const,
+                                  params: { id },
+                                };
+                  router.push(target);
+                }
+              } catch {
+                setMessage(
+                  t(
+                    "Could not mark as read.",
+                    "Не удалось отметить прочитанным.",
+                    "Oxunmuş kimi qeyd edilmədi.",
+                  ),
+                );
+              } finally {
+                setBusy(false);
+              }
+            }}
+          >
+            <Text style={s.label}>
+              {labels[n.event] ||
+                t(
+                  "Your journey has an update",
+                  "Поездка обновлена",
+                  "Səfərinizdə yenilik var",
+                )}
+            </Text>
+            <Text>
+              {new Date(n.created_at).toLocaleString(l)} · #
+              {n.booking_id?.slice(0, 8)}
+            </Text>
+            <Text>
+              {n.read_at
+                ? t("Read", "Прочитано", "Oxunub")
+                : t(
+                    "Tap to mark as read",
+                    "Нажмите, чтобы прочитать",
+                    "Oxunmuş etmək üçün toxunun",
+                  )}
+            </Text>
+          </Pressable>
+        ))}
       {!rows.length && (
         <Text>
           {t(
@@ -288,15 +372,20 @@ export default function NotificationInbox({
 }
 const s = StyleSheet.create({
   box: { gap: 12, paddingVertical: 20 },
-  title: { fontSize: 22, fontWeight: "700", color: "#1b392a" },
+  title: {
+    fontSize: 32,
+    fontFamily: heading,
+    fontWeight: "700",
+    color: colors.ink,
+  },
   button: {
     padding: 13,
     borderWidth: 1,
     borderColor: "#cbd6c7",
-    borderRadius: 4,
+    borderRadius: 9,
     alignItems: "center",
   },
   item: { padding: 14, borderBottomWidth: 1, borderColor: "#d7dfd1", gap: 8 },
-  unread: { backgroundColor: "#edf3e8" },
+  unread: { backgroundColor: "#f2f1ea" },
   label: { fontWeight: "600", fontSize: 15 },
 });

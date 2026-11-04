@@ -15,5 +15,6 @@ jobs:
       - run: |
           npm run typecheck
           npm run lint
+          npm test
           npx expo export --platform android --output-dir dist/android
           npx expo export --platform ios --output-dir dist/ios

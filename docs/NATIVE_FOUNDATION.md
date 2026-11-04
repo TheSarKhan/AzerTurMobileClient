@@ -1,3 +1,5 @@
+> Follow-on implementation: see [Customer workflows](CUSTOMER_WORKFLOWS.md). The remaining-scope notes below describe the original first slice, not the current branch.
+
 # Approved mobile UI — first development slice
 
 This branch is stacked on feature/verified-accounts-paid-amendments. All 46 design artboards were approved for development. This first slice implements the native routing/design foundation and discovery; it does not claim the complete mobile app or tickets system is finished.

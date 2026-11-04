@@ -7,7 +7,8 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "az.azertur.customer"
     },
     "android": {
       "adaptiveIcon": {
@@ -16,7 +17,9 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "allowBackup": false,
+      "package": "az.azertur.customer"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -26,7 +29,10 @@
       "expo-secure-store",
       "expo-notifications",
       "expo-router",
-      "expo-font"
+      "expo-font",
+      "expo-sharing",
+      "react-native-blob-util",
+      "@config-plugins/react-native-pdf"
     ],
     "experiments": {
       "typedRoutes": true
