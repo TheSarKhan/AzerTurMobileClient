@@ -18,6 +18,15 @@ export type TravelDocument = {
   size: number;
   replacementId: string | null;
 };
-export function actionable(d: TravelDocument) {
-  return d.status === "UPCOMING" || d.status === "ACTIVE";
+export function effectiveDocumentStatus(d: TravelDocument, now = Date.now()) {
+  if (
+    (d.status === "UPCOMING" || d.status === "ACTIVE") &&
+    Date.parse(d.ends_at) <= now
+  )
+    return "EXPIRED";
+  return d.status;
+}
+export function actionable(d: TravelDocument, now = Date.now()) {
+  const status = effectiveDocumentStatus(d, now);
+  return status === "UPCOMING" || status === "ACTIVE";
 }

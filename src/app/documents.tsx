@@ -1,3 +1,4 @@
+import { effectiveDocumentStatus } from "../features/documents/types";
 import { documentStatus } from "../features/documents/labels";
 import React, { useCallback, useState } from "react";
 import { Text, View, Pressable, ActivityIndicator } from "react-native";
@@ -64,7 +65,8 @@ export default function Documents() {
       return () => setRows([]);
     }, [load]),
   );
-  const ordered = [...rows]
+  const ordered = rows
+    .map((d) => ({ ...d, status: effectiveDocumentStatus(d) }))
     .sort((x, y) => {
       const priority = (d: TravelDocument) =>
         d.status === "UPCOMING" ? 0 : d.status === "ACTIVE" ? 1 : 2;

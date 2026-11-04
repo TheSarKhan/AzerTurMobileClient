@@ -12,7 +12,10 @@ import {
 } from "../features/account/components";
 import { ApiError } from "../api/client";
 import type { TravelDocument } from "../features/documents/types";
-import { actionable } from "../features/documents/types";
+import {
+  actionable,
+  effectiveDocumentStatus,
+} from "../features/documents/types";
 import { protectedBytes } from "../features/documents/client";
 import {
   cachedDocuments,
@@ -55,7 +58,7 @@ export default function Document() {
         a.token,
         d.sha256,
       );
-      setDoc(d);
+      setDoc({ ...d, status: effectiveDocumentStatus(d) });
       setBytes(content);
       setOffline(false);
     } catch (e) {
@@ -69,7 +72,7 @@ export default function Document() {
           );
           const data = cached ? await cachedBytes(a.customer.id, id) : null;
           if (!cached || !data) throw Error();
-          setDoc(cached);
+          setDoc({ ...cached, status: effectiveDocumentStatus(cached) });
           setBytes(data);
           setOffline(true);
         } catch {
