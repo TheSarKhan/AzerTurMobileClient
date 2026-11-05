@@ -4,17 +4,17 @@ import Svg, { Circle, Path, Polygon, Text as SvgText } from "react-native-svg";
 import { cityPoints, outline } from "./route-geo";
 import type { RouteStop } from "./route";
 
-// Crop to the north of the country, where every destination sits.
-const view = { x: 135, y: 24, width: 262, height: 150 };
+// The whole country, with a small margin.
+const view = { x: -6, y: -6, width: 412, height: 338 };
 const anchor: Record<
   string,
   { dx: number; dy: number; align: "start" | "end" | "middle" }
 > = {
-  Baku: { dx: -12, dy: 4, align: "end" },
-  Quba: { dx: 11, dy: -8, align: "start" },
-  Khinalug: { dx: 11, dy: 3, align: "start" },
-  Gabala: { dx: 0, dy: 22, align: "middle" },
-  Sheki: { dx: 0, dy: -13, align: "middle" },
+  Baku: { dx: -14, dy: 4, align: "end" },
+  Quba: { dx: 13, dy: -9, align: "start" },
+  Khinalug: { dx: 13, dy: 5, align: "start" },
+  Gabala: { dx: 0, dy: 24, align: "middle" },
+  Sheki: { dx: 0, dy: -14, align: "middle" },
 };
 
 /** The route drawn over Azerbaijan: numbered stops joined by arrows in travel order. */
@@ -56,14 +56,14 @@ export function RouteMap({
         {Object.entries(cityPoints).map(([city, p]) => (
           <React.Fragment key={city}>
             {!order.has(city) && (
-              <Circle cx={p.x} cy={p.y} r={2.5} fill="#A9B3A5" />
+              <Circle cx={p.x} cy={p.y} r={3} fill="#A9B3A5" />
             )}
             <SvgText
               fontFamily="Inter"
               x={p.x + anchor[city].dx}
               y={p.y + anchor[city].dy}
               textAnchor={anchor[city].align}
-              fontSize={9}
+              fontSize={11}
               fontWeight={order.has(city) ? "700" : "400"}
               fill={order.has(city) ? "#173D30" : "#7B857A"}
             >
@@ -78,11 +78,11 @@ export function RouteMap({
             dy = b.y - a.y,
             len = Math.hypot(dx, dy) || 1;
           // Stop short of both dots; bow alternate legs so out-and-back trips stay readable.
-          const sx = a.x + (dx / len) * 7,
-            sy = a.y + (dy / len) * 7,
-            ex = b.x - (dx / len) * 8.5,
-            ey = b.y - (dy / len) * 8.5,
-            bow = (i % 2 ? -1 : 1) * Math.min(14, len / 5),
+          const sx = a.x + (dx / len) * 9,
+            sy = a.y + (dy / len) * 9,
+            ex = b.x - (dx / len) * 11,
+            ey = b.y - (dy / len) * 11,
+            bow = (i % 2 ? -1 : 1) * Math.min(16, len / 5),
             cx = (sx + ex) / 2 - (dy / len) * bow,
             cy = (sy + ey) / 2 + (dx / len) * bow;
           // Arrowhead along the curve's end tangent.
@@ -91,14 +91,14 @@ export function RouteMap({
             tl = Math.hypot(tx, ty) || 1,
             ux = tx / tl,
             uy = ty / tl,
-            head = `${ex},${ey} ${ex - ux * 6 - uy * 3},${ey - uy * 6 + ux * 3} ${ex - ux * 6 + uy * 3},${ey - uy * 6 - ux * 3}`;
+            head = `${ex},${ey} ${ex - ux * 8 - uy * 4},${ey - uy * 8 + ux * 4} ${ex - ux * 8 + uy * 4},${ey - uy * 8 - ux * 4}`;
           return (
             <React.Fragment key={i}>
               <Path
                 d={`M${sx} ${sy} Q${cx} ${cy} ${ex} ${ey}`}
                 fill="none"
                 stroke="#BD5632"
-                strokeWidth={1.6}
+                strokeWidth={2.2}
                 strokeLinecap="round"
               />
               <Polygon points={head} fill="#BD5632" />
@@ -113,7 +113,7 @@ export function RouteMap({
               <Circle
                 cx={p.x}
                 cy={p.y}
-                r={text.length > 1 ? 8 : 6.5}
+                r={text.length > 1 ? 10 : 8}
                 fill="#BD5632"
                 stroke="#FFFFFF"
                 strokeWidth={1.5}
@@ -121,9 +121,9 @@ export function RouteMap({
               <SvgText
                 fontFamily="Inter"
                 x={p.x}
-                y={p.y + 2.9}
+                y={p.y + 3.6}
                 textAnchor="middle"
-                fontSize={8}
+                fontSize={10.5}
                 fontWeight="700"
                 fill="#FFFFFF"
               >
