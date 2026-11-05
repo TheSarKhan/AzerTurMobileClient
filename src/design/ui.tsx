@@ -88,12 +88,26 @@ export const s = StyleSheet.create({
     justifyContent: "center",
   },
   divider: { height: 1, backgroundColor: colors.line },
+  footer: {
+    borderTopWidth: 1,
+    borderTopColor: colors.line,
+    backgroundColor: colors.paper,
+    paddingHorizontal: 22,
+    paddingVertical: 12,
+    gap: 8,
+  },
 });
 export function Page({
   children,
   back,
   title,
-}: PropsWithChildren<{ back?: boolean; title?: string }>) {
+  footer,
+}: PropsWithChildren<{
+  back?: boolean;
+  title?: string;
+  /** Pinned under the scrolling content (e.g. a send button). */
+  footer?: React.ReactNode;
+}>) {
   return (
     <SafeAreaView edges={["top", "left", "right"]} style={s.page}>
       <ScrollView
@@ -121,6 +135,7 @@ export function Page({
         )}
         {children}
       </ScrollView>
+      {footer && <View style={s.footer}>{footer}</View>}
     </SafeAreaView>
   );
 }
