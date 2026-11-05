@@ -89,6 +89,14 @@ export const s = StyleSheet.create({
     justifyContent: "center",
   },
   divider: { height: 1, backgroundColor: colors.line },
+  footer: {
+    borderTopWidth: 1,
+    borderTopColor: colors.line,
+    backgroundColor: colors.paper,
+    paddingHorizontal: 22,
+    paddingVertical: 12,
+    gap: 8,
+  },
 });
 export function Page({
   children,
@@ -96,6 +104,7 @@ export function Page({
   title,
   aside,
   banner,
+  footer,
 }: PropsWithChildren<{
   back?: boolean;
   title?: string;
@@ -103,6 +112,8 @@ export function Page({
   aside?: ReactNode;
   /** Shown above the content on narrow screens. */
   banner?: ReactNode;
+  /** Pinned under the scrolling content (e.g. a send button). */
+  footer?: ReactNode;
 }>) {
   const { width } = useWindowDimensions();
   const split = !!aside && width >= 900;
@@ -154,7 +165,10 @@ export function Page({
           <View style={{ flex: 1 }}>{aside}</View>
         </>
       ) : (
-        scroll
+        <>
+          {scroll}
+          {footer && <View style={s.footer}>{footer}</View>}
+        </>
       )}
     </SafeAreaView>
   );
