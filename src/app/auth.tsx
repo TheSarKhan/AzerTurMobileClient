@@ -5,6 +5,8 @@ import { Page, s, Button } from "../design/ui";
 import { useDiscovery } from "../state/discovery";
 import { useAccount } from "../state/account";
 import { Field, ErrorNotice } from "../features/account/components";
+import { AuthShowcase } from "../features/account/AuthShowcase";
+import { GoogleSignIn } from "../features/account/GoogleSignIn";
 import { ApiError, request } from "../api/client";
 export default function Auth() {
   const { t, locale } = useDiscovery(),
@@ -53,7 +55,27 @@ export default function Auth() {
     }
   }
   return (
-    <Page back title={t("Your account", "Ваш аккаунт", "Hesabınız")}>
+    <Page
+      back
+      title={t("Your account", "Ваш аккаунт", "Hesabınız")}
+      banner={
+        <AuthShowcase
+          locale={locale}
+          style={{ height: 190, borderRadius: 12 }}
+        />
+      }
+      aside={
+        <AuthShowcase
+          locale={locale}
+          style={{ flex: 1 }}
+          quote={t(
+            "Discover Azerbaijan at your own pace.",
+            "Откройте Азербайджан в своём темпе.",
+            "Azərbaycanı öz tempinizdə kəşf edin.",
+          )}
+        />
+      }
+    >
       <Text style={s.title}>
         {recover
           ? t("A fresh start.", "Начните заново.", "Yeni başlanğıc.")
@@ -97,6 +119,45 @@ export default function Auth() {
         </Text>
       ) : (
         <>
+          {!recover && (
+            <GoogleSignIn
+              disabled={busy}
+              orLabel={t("or", "или", "və ya")}
+              label={t(
+                "Continue with Google",
+                "Продолжить с Google",
+                "Google ilə davam et",
+              )}
+              onFailure={() =>
+                setError(
+                  t(
+                    "Google sign-in did not complete. Try again or use your password.",
+                    "Вход через Google не завершён. Повторите или войдите по паролю.",
+                    "Google ilə giriş tamamlanmadı. Yenidən cəhd edin və ya şifrə ilə daxil olun.",
+                  ),
+                )
+              }
+              onCredential={async (credential) => {
+                if (busy) return;
+                setBusy(true);
+                setError("");
+                try {
+                  await a.authenticate("google", { credential, locale });
+                  router.replace("/account");
+                } catch {
+                  setError(
+                    t(
+                      "Google sign-in could not be verified. Please try again.",
+                      "Не удалось подтвердить вход через Google. Повторите попытку.",
+                      "Google ilə giriş təsdiqlənmədi. Yenidən cəhd edin.",
+                    ),
+                  );
+                } finally {
+                  setBusy(false);
+                }
+              }}
+            />
+          )}
           <View style={{ gap: 18 }}>
             {register && !recover && (
               <Field

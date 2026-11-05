@@ -39,3 +39,15 @@ The entry now uses Expo Router. Discovery, search/filter, saved journeys and tou
 ## Current native customer workflows
 
 The account/trips/planner bridge has been replaced by routed approved screens, including current contract/amendment review, service cancellations/refunds and original travel documents. See [docs/CUSTOMER_WORKFLOWS.md](docs/CUSTOMER_WORKFLOWS.md) for implementation scope and device/release checks. Native PDF viewing requires an internal/custom build (`eas build --profile preview`), not Expo Go.
+
+## Google sign-in
+
+The auth screen shows "Continue with Google" only when the API reports an OAuth client ID for the current platform (`GET /api/v1/auth/google/config`, fed by the backend's `GOOGLE_WEB_CLIENT_ID`, `GOOGLE_IOS_CLIENT_ID` and `GOOGLE_ANDROID_CLIENT_ID`). No client ID is baked into the app; client IDs are public, the app only forwards Google's ID token to `POST /api/v1/auth/google`, which verifies it.
+
+Create these in Google Cloud Console (APIs & Services → Credentials), then set the IDs on the backend:
+
+- **Web** (also used by the hosted web app): authorised JavaScript origin and redirect URI = the public origin that serves the web export.
+- **iOS**: bundle ID `az.azertur.customer`. For a native build, add its reversed client ID as a second URL scheme in `app.json` (`"scheme": ["azertur", "com.googleusercontent.apps.<id>"]`).
+- **Android**: package `az.azertur.customer` plus the SHA-1 of the signing key (debug and release keys differ).
+
+Google sign-in needs a development or production build (Expo Go cannot use the custom schemes).

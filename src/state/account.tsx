@@ -75,7 +75,10 @@ function useAccountState() {
   useEffect(() => {
     void Promise.resolve().then(clearPreviews).then(refresh);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  async function authenticate(path: "login" | "register", body: unknown) {
+  async function authenticate(
+    path: "login" | "register" | "google",
+    body: unknown,
+  ) {
     const session = await request<Session>("auth/" + path, body);
     await clearVault();
     epoch.current++;
