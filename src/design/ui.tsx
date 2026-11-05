@@ -1,10 +1,11 @@
-import React, { type PropsWithChildren } from "react";
+import React, { type PropsWithChildren, type ReactNode } from "react";
 import {
   Text,
   View,
   Pressable,
   StyleSheet,
   ScrollView,
+  useWindowDimensions,
   type StyleProp,
   type ViewStyle,
 } from "react-native";
@@ -93,34 +94,68 @@ export function Page({
   children,
   back,
   title,
-}: PropsWithChildren<{ back?: boolean; title?: string }>) {
+  aside,
+  banner,
+}: PropsWithChildren<{
+  back?: boolean;
+  title?: string;
+  /** Shown beside the content on wide screens (e.g. a photo showcase). */
+  aside?: ReactNode;
+  /** Shown above the content on narrow screens. */
+  banner?: ReactNode;
+}>) {
+  const { width } = useWindowDimensions();
+  const split = !!aside && width >= 900;
+  const scroll = (
+    <ScrollView
+      style={split ? { flex: 1 } : undefined}
+      contentContainerStyle={[
+        s.content,
+        split && {
+          maxWidth: 560,
+          flexGrow: 1,
+          justifyContent: "center",
+          padding: 48,
+        },
+      ]}
+      keyboardShouldPersistTaps="handled"
+    >
+      {(back || title) && (
+        <View style={s.row}>
+          {back && (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Back"
+              style={s.icon}
+              onPress={() =>
+                router.canGoBack() ? router.back() : router.replace("/")
+              }
+            >
+              <Feather name="arrow-left" size={23} color={colors.ink} />
+            </Pressable>
+          )}
+          {title && (
+            <Text style={[s.body, { fontFamily: "InterSemi" }]}>{title}</Text>
+          )}
+        </View>
+      )}
+      {!split && banner}
+      {children}
+    </ScrollView>
+  );
   return (
-    <SafeAreaView edges={["top", "left", "right"]} style={s.page}>
-      <ScrollView
-        contentContainerStyle={s.content}
-        keyboardShouldPersistTaps="handled"
-      >
-        {(back || title) && (
-          <View style={s.row}>
-            {back && (
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel="Back"
-                style={s.icon}
-                onPress={() =>
-                  router.canGoBack() ? router.back() : router.replace("/")
-                }
-              >
-                <Feather name="arrow-left" size={23} color={colors.ink} />
-              </Pressable>
-            )}
-            {title && (
-              <Text style={[s.body, { fontFamily: "InterSemi" }]}>{title}</Text>
-            )}
-          </View>
-        )}
-        {children}
-      </ScrollView>
+    <SafeAreaView
+      edges={["top", "left", "right"]}
+      style={[s.page, split && { flexDirection: "row" }]}
+    >
+      {split ? (
+        <>
+          <View style={{ flex: 1 }}>{scroll}</View>
+          <View style={{ flex: 1 }}>{aside}</View>
+        </>
+      ) : (
+        scroll
+      )}
     </SafeAreaView>
   );
 }
