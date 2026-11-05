@@ -33,7 +33,13 @@
       "expo-sharing",
       "react-native-blob-util",
       "@config-plugins/react-native-pdf",
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "AzTrip uses your approximate location only when you tap Near me, to show events close to you."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

@@ -23,6 +23,13 @@ export default function Privacy() {
           "Hesabınız yalnız öz səfər və sənədlərinizə giriş verir. Oflayn nüsxələr cihazda şifrələnir və çıxışda silinir. Paylaşılmış nüsxələr tətbiqin qorunan yaddaşından kənara çıxır.",
         )}
       </Text>
+      <Text style={s.body}>
+        {t(
+          'Events: if you tap "Near me", the app asks for your approximate location, rounds it to about 1 km and sends it only to find nearby events. We do not store it or link it to your account. You can pick a city instead.',
+          "События: если нажать «Рядом со мной», приложение запросит примерное местоположение, округлит его до ~1 км и отправит только для поиска событий. Мы не сохраняем его и не связываем с аккаунтом. Можно выбрать город.",
+          "Tədbirlər: «Yaxınlıqda» düyməsini bassanız, tətbiq təxmini məkanı soruşur, ~1 km-ə yuvarlaqlaşdırır və yalnız yaxın tədbirləri tapmaq üçün göndərir. Onu saxlamırıq və hesabınıza bağlamırıq. Şəhər də seçə bilərsiniz.",
+        )}
+      </Text>
       <Text style={s.muted}>
         {t(
           "The current journey contract contains the specific service, payment and cancellation terms. The office will provide the full company privacy policy before public release.",

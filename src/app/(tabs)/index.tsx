@@ -119,6 +119,9 @@ export default function Explore() {
       <Button outline onPress={() => router.push("/booking-request")}>
         {t("Plan a journey →", "Запросить поездку →", "Səfər planla →")}
       </Button>
+      <Button outline onPress={() => router.push("/events")}>
+        {t("Events near you →", "События рядом →", "Yaxınlıqdakı tədbirlər →")}
+      </Button>
       {storageError && (
         <Text accessibilityRole="alert" style={s.muted}>
           {t(
