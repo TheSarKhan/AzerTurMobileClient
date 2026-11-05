@@ -633,9 +633,9 @@ export default function Builder() {
             </View>
             <Text style={s.muted}>
               {t(
-                "Choose where you go next and how many days you stay. Only connected destinations are shown.",
-                "Выберите, куда едете дальше и сколько дней остаётесь. Показаны только связанные направления.",
-                "Növbəti istiqaməti və orada neçə gün qalacağını seç. Yalnız əlaqəli istiqamətlər göstərilir.",
+                "Choose where you go next and how many days you stay. Our team arranges the transfers.",
+                "Выберите, куда едете дальше и сколько дней остаётесь. Переезды организует команда.",
+                "Növbəti istiqaməti və orada neçə gün qalacağını seç. Yerdəyişmələri komandamız təşkil edir.",
               )}
             </Text>
             {choices.length ? (
@@ -673,9 +673,9 @@ export default function Builder() {
             ) : (
               <Text style={s.body}>
                 {t(
-                  "No destination connects to the neighbouring stops. Remove a neighbouring stop first.",
-                  "Нет направления, связанного с соседними остановками. Сначала уберите соседнюю остановку.",
-                  "Qonşu dayanacaqlarla əlaqəli istiqamət yoxdur. Əvvəlcə qonşu dayanacağı sil.",
+                  "No other destination is available here.",
+                  "Других направлений здесь нет.",
+                  "Burada başqa istiqamət yoxdur.",
                 )}
               </Text>
             )}

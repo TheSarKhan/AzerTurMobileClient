@@ -1,13 +1,11 @@
 // Pure route rules shared by the planner screen and its tests (no imports on purpose).
 export type RouteStop = { city: string; days: number };
 export const MAX_DAYS = 14;
-export const connections: Record<string, string[]> = {
-  Baku: ["Baku", "Quba", "Gabala"],
-  Quba: ["Quba", "Baku", "Khinalug"],
-  Khinalug: ["Khinalug", "Quba"],
-  Gabala: ["Gabala", "Baku", "Sheki"],
-  Sheki: ["Sheki", "Gabala"],
-};
+const destinations = ["Baku", "Quba", "Khinalug", "Gabala", "Sheki"];
+// Any destination may follow any other; the team arranges the transfers between them.
+export const connections: Record<string, string[]> = Object.fromEntries(
+  destinations.map((city) => [city, [...destinations]]),
+);
 export const templates: Record<string, string[]> = {
   "baku-discovery": ["Baku"],
   "quba-khinalug": ["Quba", "Khinalug"],
