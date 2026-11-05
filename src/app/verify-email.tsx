@@ -1,4 +1,4 @@
-import { useLocalSearchParams } from "expo-router";
+import { useAccountLinkToken } from "../features/account/link-token";
 import { request } from "../api/client";
 import React, { useState } from "react";
 import { Text } from "react-native";
@@ -6,12 +6,11 @@ import { Page, s, Button } from "../design/ui";
 import { useAccount } from "../state/account";
 import { useDiscovery } from "../state/discovery";
 import {
-  SignedIn,
   ErrorNotice,
   useProblem,
 } from "../features/account/components";
 export default function Verify() {
-  const { token } = useLocalSearchParams<{ token?: string }>();
+  const token = useAccountLinkToken();
   const a = useAccount(),
     { t } = useDiscovery(),
     problem = useProblem();
@@ -20,7 +19,7 @@ export default function Verify() {
     [error, setError] = useState("");
   return (
     <Page back>
-      <SignedIn>
+      <>
         <Text style={s.title}>
           {t("Check your inbox.", "Проверьте почту.", "Emailinizi yoxlayın.")}
         </Text>
@@ -50,7 +49,8 @@ export default function Verify() {
               setError("");
               try {
                 await request("auth/verify-email", { token });
-                await a.refresh();
+                if (a.customer) await a.refresh();
+                setMessage(t("Email verified. Sign in to continue.", "Email подтверждён. Войдите, чтобы продолжить.", "Email təsdiqləndi. Davam etmək üçün daxil olun."));
               } catch {
                 setError(problem());
               } finally {
@@ -65,7 +65,7 @@ export default function Verify() {
             )}
           </Button>
         )}
-        <Button
+        {a.customer && <Button
           disabled={busy}
           onPress={async () => {
             setBusy(true);
@@ -81,8 +81,8 @@ export default function Verify() {
             "Я подтвердил — обновить",
             "Təsdiqlədim — yenilə",
           )}
-        </Button>
-        {!a.customer?.emailVerified && (
+        </Button>}
+        {a.customer && !a.customer.emailVerified && (
           <Button
             outline
             disabled={busy}
@@ -108,7 +108,7 @@ export default function Verify() {
             {t("Resend email", "Отправить повторно", "Yenidən göndər")}
           </Button>
         )}
-      </SignedIn>
+      </>
     </Page>
   );
 }

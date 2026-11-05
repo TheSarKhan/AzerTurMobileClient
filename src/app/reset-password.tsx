@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { Text } from "react-native";
-import { router, useLocalSearchParams } from "expo-router";
+import { router } from "expo-router";
+import { useAccountLinkToken } from "../features/account/link-token";
 import { Page, s, Button } from "../design/ui";
 import { Field, ErrorNotice, useProblem } from "../features/account/components";
 import { useDiscovery } from "../state/discovery";
 import { useAccount } from "../state/account";
 import { request } from "../api/client";
 export default function Reset() {
-  const { token } = useLocalSearchParams<{ token?: string }>(),
+  const token = useAccountLinkToken(),
     { t } = useDiscovery(),
     a = useAccount(),
     problem = useProblem();

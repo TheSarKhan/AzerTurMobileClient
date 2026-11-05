@@ -5,6 +5,6 @@ const expoConfig = require('eslint-config-expo/flat');
 module.exports = defineConfig([
   expoConfig,
   {
-    ignores: ['dist/**', '.expo/**', 'public/pdf.worker.min.mjs'],
+    ignores: ['dist/**', 'dist-production/**', '.expo/**', 'public/pdf.worker.min.mjs'],
   },
 ]);
