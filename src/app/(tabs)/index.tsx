@@ -14,7 +14,7 @@ export default function Explore() {
   return (
     <Page>
       <View style={s.between}>
-        <Text style={[s.h2, { fontSize: 31 }]}>azərtur</Text>
+        <Text style={[s.h2, { fontSize: 31 }]}>AzTrip</Text>
         <View style={s.row}>
           {(["en", "ru", "az"] as const).map((l) => (
             <Pressable
