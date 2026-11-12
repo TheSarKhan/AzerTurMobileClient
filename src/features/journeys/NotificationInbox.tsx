@@ -108,6 +108,11 @@ export default function NotificationInbox({
       "Запрошена оплата",
       "Ödəniş tələb edilib",
     ),
+    PAYMENT_RECEIVED: t(
+      "Payment received",
+      "Платёж получен",
+      "Ödəniş qəbul edildi",
+    ),
     REVISED_PLAN_SENT: t(
       "Your payment plan was revised",
       "План оплаты обновлён",

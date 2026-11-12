@@ -35,7 +35,6 @@ export interface Quote {
   balance: number;
   due: string;
   expires: string;
-  demo: boolean;
   lines: { label: string; amount: number }[];
 }
 export interface Booking {
