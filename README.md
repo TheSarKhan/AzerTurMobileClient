@@ -22,7 +22,7 @@ This export checks Metro/native JavaScript bundling; it does not produce or veri
 
 ## Customer review workflow update
 
-The customer registration, durable reservation request, office approval and demo-payment flows are now implemented. See [the current architecture, API and remaining production work](docs/ARCHITECTURE.md); that document supersedes the initial foundation-only notes above. No cloud deployment or live payment/provider connection is included.
+The customer registration, durable reservation request, offer and contract workflow and finance-recorded payments are now implemented. See [the current architecture, API and remaining production work](docs/ARCHITECTURE.md); that document supersedes the initial foundation-only notes above. No cloud deployment or live payment/provider connection is included.
 
 ## Notifications update
 
