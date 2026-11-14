@@ -8,8 +8,9 @@ import { colors } from "../../design/theme";
 import { categoryLabels, cityName, eventTitle, type EventView } from "./api";
 import { formatDistance, formatPrice, formatWhen } from "./format";
 export function usePriceWords() {
-  const { t } = useDiscovery();
+  const { t, currency } = useDiscovery();
   return {
+    currency,
     free: t("Free", "Бесплатно", "Pulsuz"),
     from: t("from", "от", "başlayaraq"),
     see: t("See tickets", "Билеты по ссылке", "Biletlər keçiddə"),

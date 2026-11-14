@@ -4,11 +4,13 @@ import Feather from "@expo/vector-icons/Feather";
 import { router } from "expo-router";
 import { Page, Button, s } from "../design/ui";
 import { colors } from "../design/theme";
-import { useDiscovery } from "../state/discovery";
+import { rates, useDiscovery } from "../state/discovery";
 export default function Filters() {
-  const { t, filter, setFilter } = useDiscovery();
+  const { t, filter, setFilter, currency } = useDiscovery();
   const [draft, setDraft] = useState(filter),
-    [max, setMax] = useState(filter.max === null ? "" : String(filter.max)),
+    [max, setMax] = useState(
+      filter.max === null ? "" : String(Math.round(filter.max * rates[currency])),
+    ),
     [error, setError] = useState("");
   return (
     <Page back title={t("Filters", "Фильтры", "Filtrlər")}>
@@ -81,16 +83,16 @@ export default function Filters() {
       <View style={s.divider} />
       <Text style={s.h2}>
         {t(
-          "Maximum starting price (EUR)",
-          "Макс. начальная цена (EUR)",
-          "Maksimum başlanğıc qiymət (EUR)",
+          `Maximum starting price (${currency})`,
+          `Макс. начальная цена (${currency})`,
+          `Maksimum başlanğıc qiymət (${currency})`,
         )}
       </Text>
       <TextInput
         accessibilityLabel={t(
-          "Maximum price in EUR",
-          "Максимальная цена в EUR",
-          "Maksimum qiymət EUR",
+          `Maximum price in ${currency}`,
+          `Максимальная цена в ${currency}`,
+          `Maksimum qiymət ${currency}`,
         )}
         keyboardType="numeric"
         value={max}
@@ -126,7 +128,10 @@ export default function Filters() {
             );
             return;
           }
-          setFilter({ ...draft, max: value });
+          setFilter({
+            ...draft,
+            max: value === null ? null : value / rates[currency],
+          });
           router.back();
         }}
       >

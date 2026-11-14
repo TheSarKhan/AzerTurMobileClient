@@ -83,17 +83,24 @@ export function formatWhen(
   }
   return timeKnown ? first + " · " + formatTime(startsAt) : first;
 }
+const eventRates: Record<string, number> = { EUR: 1, USD: 1.1, AZN: 1.87 };
 export function formatPrice(
   free: boolean,
   priceFromMinor: number | null,
   currency: string,
-  words: { free: string; from: string; see: string },
+  words: { free: string; from: string; see: string; currency?: string },
 ) {
   if (free) return words.free;
   if (priceFromMinor == null) return words.see;
-  const major = priceFromMinor / 100;
+  // Show the amount in the currency the visitor picked; unknown currencies stay as published.
+  const target = words.currency;
+  const convert =
+    target && target !== currency && eventRates[currency] && eventRates[target];
+  const major = convert
+    ? Math.round((priceFromMinor / 100 / eventRates[currency]) * eventRates[target!])
+    : priceFromMinor / 100;
   const text = Number.isInteger(major) ? String(major) : major.toFixed(2);
-  return words.from + " " + text + " " + currency;
+  return words.from + " " + text + " " + (convert ? target : currency);
 }
 /** About 1 km: enough for "near me", too coarse to identify a street. */
 export function round2(n: number) {

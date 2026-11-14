@@ -23,7 +23,6 @@ import {
 import {
   request,
   type Quote,
-  type Currency,
   type Booking,
   ApiError,
 } from "../api/client";
@@ -55,7 +54,7 @@ const label = {
 
 export default function Builder() {
   const { slug: initialSlug } = useLocalSearchParams<{ slug?: string }>(),
-    { t, locale, tours, planner, setPlanner, currency: preferred } = useDiscovery(),
+    { t, locale, tours, planner, setPlanner, currency } = useDiscovery(),
     a = useAccount(),
     problem = useProblem();
   const draft =
@@ -73,7 +72,6 @@ export default function Builder() {
         }),
     ),
     [pax, setPax] = useState(draft?.pax || "2"),
-    [currency] = useState<Currency>(draft?.currency || preferred),
     [hotel, setHotel] = useState(draft?.hotel || "comfort"),
     [guideLanguage, setGuideLanguage] = useState(
       draft?.guideLanguage || locale,
