@@ -167,7 +167,7 @@ export default function AccountSecurity({
           <Text>
             {x.device}{" "}
             {x.current
-              ? t("· This device", "· Это устройство", "· Bu cihaz")
+              ? t("(This device)", "(Это устройство)", "(Bu cihaz)")
               : ""}
           </Text>
           <Text>{new Date(x.last_seen_at).toLocaleString(l)}</Text>

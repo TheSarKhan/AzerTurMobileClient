@@ -103,7 +103,7 @@ export default function Document() {
           <>
             <Text style={s.title}>{doc.title}</Text>
             <Text style={s.body}>
-              {documentKind(doc.kind, t)} · v{doc.version}
+              {documentKind(doc.kind, t)}, v{doc.version}
             </Text>
             {!actionable(doc) && (
               <View style={[s.card, { padding: 18, gap: 12 }]}>
@@ -145,7 +145,7 @@ export default function Document() {
               {new Date(doc.ends_at).toLocaleString(locale, {
                 timeZone: doc.timezone,
               })}{" "}
-              · {doc.timezone}
+             , {doc.timezone}
             </Text>
             <Text style={s.muted}>
               {t("Last checked", "Последняя проверка", "Son yoxlanma")}:{" "}

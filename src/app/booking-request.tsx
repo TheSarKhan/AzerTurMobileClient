@@ -128,7 +128,7 @@ export default function Builder() {
   const labels = {
     driver: t("Private driver", "Личный водитель", "Fərdi sürücü"),
     stay: t("Accommodation", "Проживание", "Qalma yeri"),
-    guide: t("Local guide", "Местный гид", "Yerli gid"),
+    guide: t("Local guide", "Местный гид", "Yerli bələdçi"),
     transfer: t(
       "Airport transfer",
       "Трансфер из аэропорта",
@@ -154,7 +154,7 @@ export default function Builder() {
     guide: t(
       "A local guide for the whole trip",
       "Местный гид на всё путешествие",
-      "Bütün səfər boyu yerli gid",
+      "Bütün səfər boyu yerli bələdçi",
     ),
     transfer: t(
       "Pick-up on arrival",
@@ -317,7 +317,7 @@ export default function Builder() {
             <ErrorNotice message={error} />
             <View style={s.between}>
               <Text style={s.muted}>
-                {days} {dayWord(days)} · {chosen.length}{" "}
+                {days} {dayWord(days)}, {chosen.length}{" "}
                 {t("services", "услуг", "xidmət")}
               </Text>
               <Text style={s.muted}>
@@ -345,16 +345,16 @@ export default function Builder() {
         <View style={{ gap: 14 }}>
           <Field
             label={t(
-              "Start date · YYYY-MM-DD",
-              "Дата начала · YYYY-MM-DD",
-              "Başlama tarixi · YYYY-MM-DD",
+              "Start date, YYYY-MM-DD",
+              "Дата начала, YYYY-MM-DD",
+              "Başlama tarixi, YYYY-MM-DD",
             )}
             value={date}
             onChangeText={setDate}
             maxLength={10}
           />
           <Field
-            label={t("Travelers · 1–12", "Гости · 1–12", "Nəfər · 1–12")}
+            label={t("Travelers, 1–12", "Гости, 1–12", "Nəfər, 1–12")}
             keyboardType="number-pad"
             value={pax}
             onChangeText={setPax}
@@ -402,7 +402,7 @@ export default function Builder() {
                   {cityName(x.city)}
                 </Text>
                 <Text style={s.muted}>
-                  {dayRange(i)} · {x.days} {dayWord(x.days)}
+                  {dayRange(i)}, {x.days} {dayWord(x.days)}
                 </Text>
               </View>
               <Pressable
@@ -565,7 +565,7 @@ export default function Builder() {
                     onChange={(v) =>
                       setGuideLanguage(v as typeof guideLanguage)
                     }
-                    label={t("Guide language", "Язык гида", "Gidin dili")}
+                    label={t("Guide language", "Язык гида", "Bələdçinin dili")}
                   />
                 )}
               </View>

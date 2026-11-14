@@ -36,12 +36,12 @@ export default function RevisedPlan({
           "Обновлённый план оплаты",
           "Yenilənmiş ödəniş planı",
         )}{" "}
-        · v{plan.version}
+       , v{plan.version}
       </Text>
       {p.services.map((x) => (
         <View key={x.key}>
           <Text style={s.body}>
-            {x.name} · {money(x.total, p.currency, locale)}
+            {x.name}, {money(x.total, p.currency, locale)}
           </Text>
           <Text style={s.muted}>{x.policy}</Text>
         </View>

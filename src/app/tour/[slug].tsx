@@ -49,9 +49,9 @@ export default function Detail() {
       <Text style={s.muted}>
         {tour.days}{" "}
         {t(
-          tour.days === 1 ? "day · Private journey" : "days · Private journey",
-          "дн. · Частный тур",
-          "gün · Fərdi səfər",
+          tour.days === 1 ? "day, Private journey" : "days, Private journey",
+          "дн., Частный тур",
+          "gün, Fərdi səfər",
         )}
       </Text>
       <Text style={s.h2}>

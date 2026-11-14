@@ -94,14 +94,14 @@ export default function Proposal() {
           <>
             <Text style={s.title}>{p.title}</Text>
             <Text style={s.body}>
-              {p.date} · {p.travelers} {t("travelers", "гостей", "nəfər")} ·{" "}
+              {p.date}, {p.travelers} {t("travelers", "гостей", "nəfər")},{" "}
               {item.state}
             </Text>
             <Text style={s.body}>{p.message}</Text>
             {p.services.map((x) => (
               <View key={x.key} style={{ gap: 8 }}>
                 <Text style={s.h2}>
-                  {x.name} · {money(x.total, p.currency, locale)}
+                  {x.name}, {money(x.total, p.currency, locale)}
                 </Text>
                 <Text style={s.muted}>{x.policy}</Text>
               </View>

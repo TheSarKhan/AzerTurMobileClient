@@ -44,10 +44,10 @@ export default function TourCard({ tour }: { tour: Tour }) {
             {tour.days}{" "}
             {t(
               tour.days === 1
-                ? "day · Private journey"
-                : "days · Private journey",
-              "дн. · Индивидуальная поездка",
-              "gün · Fərdi səfər",
+                ? "day, Private journey"
+                : "days, Private journey",
+              "дн., Индивидуальная поездка",
+              "gün, Fərdi səfər",
             )}
           </Text>
           <Text style={[s.body, { fontFamily: "InterSemi" }]}>

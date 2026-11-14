@@ -35,7 +35,7 @@ export default function EventCard({ event }: { event: EventView }) {
       <Text
         style={[s.muted, { color: colors.accent, fontFamily: "InterSemi" }]}
       >
-        {categories[event.category] ?? event.category} ·{" "}
+        {categories[event.category] ?? event.category},{" "}
         {cityName(event, locale)}
       </Text>
       <Text style={[s.h2, { fontSize: 21 }]}>{eventTitle(event, locale)}</Text>
@@ -50,7 +50,7 @@ export default function EventCard({ event }: { event: EventView }) {
         <Text style={[s.muted, { flex: 1 }]}>
           {event.venueName}
           {event.distanceKm != null
-            ? " · " + formatDistance(event.distanceKm)
+            ? ", " + formatDistance(event.distanceKm)
             : ""}
         </Text>
       </View>

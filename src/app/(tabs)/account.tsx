@@ -94,7 +94,7 @@ export default function Account() {
                   "Язык и валюта",
                   "Dil və valyuta",
                 )}
-                value={`${{ en: "English", ru: "Русский", az: "Azərbaycanca" }[locale]} · ${currency}`}
+                value={`${{ en: "English", ru: "Русский", az: "Azərbaycanca" }[locale]}, ${currency}`}
                 onPress={() => router.push("/preferences")}
               />
             </Menu>

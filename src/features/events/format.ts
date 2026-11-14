@@ -70,7 +70,7 @@ export function sameDay(a: string, b: string) {
     y = parts(b);
   return x.y === y.y && x.m === y.m && x.day === y.day;
 }
-/** "7 Nov 2026 · 20:00", or just the date when the time is not known. */
+/** "7 Nov 2026, 20:00", or just the date when the time is not known. */
 export function formatWhen(
   startsAt: string,
   endsAt: string,
@@ -81,7 +81,7 @@ export function formatWhen(
   if (!sameDay(startsAt, endsAt)) {
     return first + " – " + formatDay(endsAt, locale);
   }
-  return timeKnown ? first + " · " + formatTime(startsAt) : first;
+  return timeKnown ? first + ", " + formatTime(startsAt) : first;
 }
 const eventRates: Record<string, number> = { EUR: 1, USD: 1.1, AZN: 1.87 };
 export function formatPrice(

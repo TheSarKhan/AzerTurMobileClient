@@ -117,7 +117,7 @@ export default function Payments() {
               </View>
               <Text style={s.body}>{status(x.status)}</Text>
               <Text style={s.muted}>
-                {new Date(x.created_at).toLocaleDateString(locale)} · #
+                {new Date(x.created_at).toLocaleDateString(locale)}, #
                 {x.id.slice(0, 8)}
               </Text>
             </Pressable>

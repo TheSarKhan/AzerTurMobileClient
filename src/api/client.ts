@@ -10,6 +10,7 @@ export interface Customer {
   id: string;
   email: string;
   name: string;
+  phone?: string | null;
   locale: Locale;
 }
 export interface Session {

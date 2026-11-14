@@ -251,7 +251,7 @@ export default function NotificationInbox({
                 )}
             </Text>
             <Text>
-              {new Date(n.created_at).toLocaleString(l)} · #
+              {new Date(n.created_at).toLocaleString(l)}, #
               {n.booking_id?.slice(0, 8)}
             </Text>
             <Text>

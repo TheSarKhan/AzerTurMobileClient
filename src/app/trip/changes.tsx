@@ -118,7 +118,7 @@ export default function Changes() {
                 "Предложение изменения",
                 "Dəyişiklik təklifi",
               )}{" "}
-              · v{p.draft_version} · {p.state}
+             , v{p.draft_version}, {p.state}
             </Text>
             <Button
               outline
@@ -139,7 +139,7 @@ export default function Changes() {
               {r.kind === "CANCEL"
                 ? t("Cancellation", "Отмена", "Ləğv")
                 : t("Change", "Изменение", "Dəyişiklik")}{" "}
-              · {r.status}
+             , {r.status}
             </Text>
             <Text style={s.muted}>{r.message}</Text>
             {!!r.response && <Text style={s.body}>{r.response}</Text>}
@@ -191,7 +191,7 @@ export default function Changes() {
                       style={[s.card, { padding: 18, gap: 9 }]}
                     >
                       <Text style={s.body}>
-                        {selection.includes(x.key) ? "☑" : "☐"} {x.name} ·{" "}
+                        {selection.includes(x.key) ? "☑" : "☐"} {x.name},{" "}
                         {money(x.total, context.offer.currency, locale)}
                       </Text>
                       <Text style={s.muted}>

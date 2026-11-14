@@ -16,6 +16,7 @@ export default function Auth() {
     [email, setEmail] = useState(""),
     [password, setPassword] = useState(""),
     [name, setName] = useState(""),
+    [phone, setPhone] = useState(""),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
     [sent, setSent] = useState(false);
@@ -32,7 +33,7 @@ export default function Auth() {
         await a.authenticate(register ? "register" : "login", {
           email: email.trim(),
           password,
-          ...(register ? { name: name.trim(), locale } : {}),
+          ...(register ? { name: name.trim(), phone: phone.trim(), locale } : {}),
         });
         router.replace("/account");
       }
@@ -45,9 +46,9 @@ export default function Auth() {
               "Yenidən cəhd etməzdən əvvəl gözləyin.",
             )
           : t(
-              "Check your email and password. Registration needs a name and 12–72 character password.",
-              "Проверьте email и пароль. Для регистрации нужны имя и пароль 12–72 символа.",
-              "Email və şifrəni yoxlayın. Qeydiyyat üçün ad və 12–72 simvolluq şifrə lazımdır.",
+              "Check your email and password. Registration needs a name, a phone number and a 12–72 character password.",
+              "Проверьте email и пароль. Для регистрации нужны имя, телефон и пароль 12–72 символа.",
+              "Email və şifrəni yoxlayın. Qeydiyyat üçün ad, telefon və 12–72 simvolluq şifrə lazımdır.",
             ),
       );
     } finally {
@@ -177,6 +178,17 @@ export default function Auth() {
               autoComplete="email"
               maxLength={254}
             />
+            {register && !recover && (
+              <Field
+                label={t("Phone number", "Номер телефона", "Telefon nömrəsi")}
+                value={phone}
+                onChangeText={setPhone}
+                keyboardType="phone-pad"
+                autoComplete="tel"
+                maxLength={24}
+                placeholder="+994 50 123 45 67"
+              />
+            )}
             {!recover && (
               <Field
                 label={t("Password", "Пароль", "Şifrə")}
@@ -196,7 +208,9 @@ export default function Auth() {
               (!recover &&
                 (!password ||
                   (register &&
-                    (password.length < 12 || name.trim().length < 2))))
+                    (password.length < 12 ||
+                      name.trim().length < 2 ||
+                      phone.replace(/\D/g, "").length < 7))))
             }
             onPress={() => void submit()}
           >

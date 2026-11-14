@@ -156,7 +156,7 @@ export default function Documents() {
               {new Date(d.starts_at).toLocaleString(locale, {
                 timeZone: d.timezone,
               })}{" "}
-              · {d.timezone}
+             , {d.timezone}
             </Text>
             <Text
               style={[
@@ -168,7 +168,7 @@ export default function Documents() {
                 },
               ]}
             >
-              {documentStatus(d.status, t)} · v{d.version}
+              {documentStatus(d.status, t)}, v{d.version}
             </Text>
             <Text style={s.muted}>
               {t("Last checked", "Последняя проверка", "Son yoxlanma")}:{" "}

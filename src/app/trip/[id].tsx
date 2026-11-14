@@ -95,7 +95,7 @@ export default function Trip() {
             <Text style={s.muted}>
               {offer?.date || booking.departure}
               {offer
-                ? " · " +
+                ? ", " +
                   offer.travelers +
                   " " +
                   t("travelers", "путешественников", "nəfər")
@@ -135,7 +135,7 @@ export default function Trip() {
                       )}
                 </Text>
                 <Text style={s.muted}>
-                  {t("Version", "Версия", "Versiya")} {contract.version} · PDF
+                  {t("Version", "Версия", "Versiya")} {contract.version}, PDF
                 </Text>
                 <Button
                   outline

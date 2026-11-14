@@ -90,7 +90,7 @@ export default function ContractReview() {
         {doc ? (
           <>
             <Text style={s.body}>
-              {doc.filename} · {t("Version", "Версия", "Versiya")} {doc.version}
+              {doc.filename}, {t("Version", "Версия", "Versiya")} {doc.version}
             </Text>
             <Text style={s.muted}>
               {t(

@@ -127,7 +127,7 @@ export default function Trips() {
                       : b.title)}
                 </Text>
                 <Text style={s.muted}>
-                  {b.departure} · #{b.id.slice(0, 8)}
+                  {b.departure}, #{b.id.slice(0, 8)}
                 </Text>
                 <Text style={[s.body, { color: colors.accent }]}>
                   {offers.some((x) => x.bookingId === b.id) &&

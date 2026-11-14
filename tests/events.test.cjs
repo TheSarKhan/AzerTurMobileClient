@@ -14,7 +14,7 @@ test("times are shown in Baku time (UTC+4)", () => {
   assert.equal(f.formatTime("2026-11-07T16:00:00Z"), "20:00");
   assert.equal(
     f.formatWhen("2026-11-07T16:00:00Z", "2026-11-07T17:30:00Z", true, "en"),
-    "7 Nov 2026 · 20:00",
+    "7 Nov 2026, 20:00",
   );
 });
 test("late evening UTC is already the next day in Baku", () => {

@@ -104,7 +104,7 @@ export default function EventScreen() {
       <Text
         style={[s.muted, { color: colors.accent, fontFamily: "InterSemi" }]}
       >
-        {categories[e.category] ?? e.category} · {cityName(e, locale)}
+        {categories[e.category] ?? e.category}, {cityName(e, locale)}
       </Text>
       <Text style={s.title}>{eventTitle(e, locale)}</Text>
       {fact("calendar", formatWhen(e.startsAt, e.endsAt, e.timeKnown, locale))}
