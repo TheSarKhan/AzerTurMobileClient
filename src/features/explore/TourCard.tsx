@@ -6,7 +6,13 @@ import { type Tour } from "../../api/client";
 import { useDiscovery } from "../../state/discovery";
 import { s } from "../../design/ui";
 import { colors } from "../../design/theme";
-export function photo(slug: string) {
+export function photo(slug: string, image?: string) {
+  // Tours added in the office carry an image key; older code paths only know the slug.
+  if (image === "mountains")
+    return require("../../../assets/photos/khinalug.png");
+  if (image === "sheki") return require("../../../assets/photos/sheki.png");
+  if (image === "gabala") return require("../../../assets/photos/gabala.png");
+  if (image === "baku") return require("../../../assets/photos/baku.png");
   if (slug.includes("quba") || slug.includes("khinalug"))
     return require("../../../assets/photos/khinalug.png");
   if (slug.includes("sheki"))
@@ -28,7 +34,7 @@ export default function TourCard({ tour }: { tour: Tour }) {
         }
       >
         <Image
-          source={photo(tour.slug)}
+          source={photo(tour.slug, tour.image)}
           style={styles.image}
           accessibilityLabel={title(tour)}
         />

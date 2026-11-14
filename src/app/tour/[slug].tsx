@@ -39,7 +39,7 @@ export default function Detail() {
       title={t("Journey details", "Детали поездки", "Səfərin detalları")}
     >
       <Image
-        source={photo(slug)}
+        source={photo(slug, tour.image)}
         style={{ height: 250, width: "100%", borderRadius: 12 }}
         accessibilityLabel={title(tour)}
       />
