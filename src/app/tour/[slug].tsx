@@ -7,7 +7,7 @@ import { useDiscovery } from "../../state/discovery";
 import { photo } from "../../features/explore/TourCard";
 export default function Detail() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
-  const { t, tours, title, loading, error, load, saved, toggle } =
+  const { t, tours, title, loading, error, load, saved, toggle, price } =
     useDiscovery();
   const tour = tours.find((x) => x.slug === slug);
   if (!tour)
@@ -55,7 +55,7 @@ export default function Detail() {
         )}
       </Text>
       <Text style={s.h2}>
-        {t("From", "От", "Başlayan qiymət")} €{tour.fromPriceEur} /{" "}
+        {t("From", "От", "Başlayan qiymət")} {price(tour.fromPriceEur)} /{" "}
         {t("person", "чел.", "nəfər")}
       </Text>
       <View style={s.divider} />

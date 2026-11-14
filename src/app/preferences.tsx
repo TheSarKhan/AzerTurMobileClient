@@ -3,7 +3,7 @@ import { Text, View } from "react-native";
 import { Page, s, Button } from "../design/ui";
 import { useDiscovery } from "../state/discovery";
 export default function Preferences() {
-  const { t, locale, setLocale } = useDiscovery();
+  const { t, locale, setLocale, currency, setCurrency } = useDiscovery();
   return (
     <Page back title={t("Preferences", "Настройки", "Seçimlər")}>
       <Text style={s.title}>
@@ -18,7 +18,17 @@ export default function Preferences() {
         ))}
       </View>
       <Text style={s.h2}>{t("Currency", "Валюта", "Valyuta")}</Text>
-      <Text style={s.body}>EUR · USD · AZN</Text>
+      <View style={{ gap: 10 }}>
+        {(["EUR", "USD", "AZN"] as const).map((c) => (
+          <Button
+            key={c}
+            outline={currency !== c}
+            onPress={() => setCurrency(c)}
+          >
+            {c}
+          </Button>
+        ))}
+      </View>
       <Text style={s.muted}>
         {t(
           "Choose the estimate currency when planning a journey. Offers, payment requests and receipts retain their actual currency; changing language never converts a charge.",

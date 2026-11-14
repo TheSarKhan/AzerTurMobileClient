@@ -55,7 +55,7 @@ const label = {
 
 export default function Builder() {
   const { slug: initialSlug } = useLocalSearchParams<{ slug?: string }>(),
-    { t, locale, tours, planner, setPlanner } = useDiscovery(),
+    { t, locale, tours, planner, setPlanner, currency: preferred } = useDiscovery(),
     a = useAccount(),
     problem = useProblem();
   const draft =
@@ -73,7 +73,7 @@ export default function Builder() {
         }),
     ),
     [pax, setPax] = useState(draft?.pax || "2"),
-    [currency] = useState<Currency>(draft?.currency || "EUR"),
+    [currency] = useState<Currency>(draft?.currency || preferred),
     [hotel, setHotel] = useState(draft?.hotel || "comfort"),
     [guideLanguage, setGuideLanguage] = useState(
       draft?.guideLanguage || locale,

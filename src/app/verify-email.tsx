@@ -2,6 +2,7 @@ import { useAccountLinkToken } from "../features/account/link-token";
 import { request } from "../api/client";
 import React, { useState } from "react";
 import { Text } from "react-native";
+import { useRouter } from "expo-router";
 import { Page, s, Button } from "../design/ui";
 import { useAccount } from "../state/account";
 import { useDiscovery } from "../state/discovery";
@@ -13,8 +14,10 @@ export default function Verify() {
   const token = useAccountLinkToken();
   const a = useAccount(),
     { t } = useDiscovery(),
-    problem = useProblem();
+    problem = useProblem(),
+    router = useRouter();
   const [busy, setBusy] = useState(false),
+    [done, setDone] = useState(false),
     [message, setMessage] = useState(""),
     [error, setError] = useState("");
   return (
@@ -41,7 +44,7 @@ export default function Verify() {
             : message}
         </Text>
         <ErrorNotice message={error} />
-        {token && !a.customer?.emailVerified && (
+        {token && !a.customer?.emailVerified && !done && (
           <Button
             disabled={busy}
             onPress={async () => {
@@ -49,6 +52,8 @@ export default function Verify() {
               setError("");
               try {
                 await request("auth/verify-email", { token });
+                setDone(true);
+                setError("");
                 if (a.customer) await a.refresh();
                 setMessage(t("Email verified. Sign in to continue.", "Email подтверждён. Войдите, чтобы продолжить.", "Email təsdiqləndi. Davam etmək üçün daxil olun."));
               } catch {
@@ -65,7 +70,12 @@ export default function Verify() {
             )}
           </Button>
         )}
-        {a.customer && <Button
+        {done && !a.customer && (
+          <Button onPress={() => router.push("/account")}>
+            {t("Sign in", "Войти", "Daxil ol")}
+          </Button>
+        )}
+        {a.customer && !a.customer.emailVerified && <Button
           disabled={busy}
           onPress={async () => {
             setBusy(true);

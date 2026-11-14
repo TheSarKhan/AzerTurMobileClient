@@ -8,7 +8,10 @@ import React, {
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { PlannerDraft } from "./planner";
-import { getTours, type Tour, type Locale } from "../api/client";
+import { getTours, type Tour, type Locale, type Currency } from "../api/client";
+/** Display rates relative to EUR, identical to the website. Charges keep their real currency. */
+export const rates: Record<Currency, number> = { EUR: 1, USD: 1.1, AZN: 1.87 };
+const symbols: Record<Currency, string> = { EUR: "€", USD: "$", AZN: "₼" };
 type Filter = {
   region: "all" | "nature" | "culture" | "city";
   duration: "all" | "1" | "2-3" | "4+";
@@ -20,6 +23,7 @@ function useDiscoveryState() {
     [loading, setLoading] = useState(true),
     [error, setError] = useState(false),
     [locale, setLocale] = useState<Locale>("en"),
+    [currency, setCurrency] = useState<Currency>("EUR"),
     [saved, setSaved] = useState<string[]>([]),
     [filter, setFilter] = useState<Filter>(empty),
     [storageError, setStorageError] = useState(false),
@@ -55,6 +59,8 @@ function useDiscoveryState() {
         if (raw) {
           const data = JSON.parse(raw);
           if (["en", "ru", "az"].includes(data.locale)) setLocale(data.locale);
+          if (["EUR", "USD", "AZN"].includes(data.currency))
+            setCurrency(data.currency);
           if (Array.isArray(data.saved))
             setSaved(
               [
@@ -76,12 +82,12 @@ function useDiscoveryState() {
       .then(() =>
         AsyncStorage.setItem(
           "azertur.discovery.v1",
-          JSON.stringify({ locale, saved }),
+          JSON.stringify({ locale, currency, saved }),
         ),
       )
       .then(() => setStorageError(false))
       .catch(() => setStorageError(true));
-  }, [locale, saved, ready]);
+  }, [locale, currency, saved, ready]);
   const t = (en: string, ru: string, az: string) =>
     locale === "az" ? az : locale === "ru" ? ru : en;
   const title = (tour: Tour) =>
@@ -90,6 +96,10 @@ function useDiscoveryState() {
       : locale === "ru"
         ? tour.titleRu
         : tour.titleEn;
+  const price = (eur: number) => {
+    const value = Math.round(eur * rates[currency]);
+    return currency === "EUR" ? symbols.EUR + value : value + " " + symbols[currency];
+  };
   const toggle = (slug: string) =>
     setSaved((s) =>
       s.includes(slug) ? s.filter((x) => x !== slug) : [...s, slug].slice(-200),
@@ -103,6 +113,9 @@ function useDiscoveryState() {
     load,
     locale,
     setLocale,
+    currency,
+    setCurrency,
+    price,
     saved,
     toggle,
     filter,

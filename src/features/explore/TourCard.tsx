@@ -1,7 +1,7 @@
 import React from "react";
 import { Image, View, Text, Pressable, StyleSheet } from "react-native";
 import { router } from "expo-router";
-import Feather from "@expo/vector-icons/Feather";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { type Tour } from "../../api/client";
 import { useDiscovery } from "../../state/discovery";
 import { s } from "../../design/ui";
@@ -16,7 +16,7 @@ export function photo(slug: string) {
   return require("../../../assets/photos/baku.png");
 }
 export default function TourCard({ tour }: { tour: Tour }) {
-  const { t, title, saved, toggle } = useDiscovery();
+  const { t, title, saved, toggle, price } = useDiscovery();
   const marked = saved.includes(tour.slug);
   return (
     <View style={s.card}>
@@ -45,7 +45,7 @@ export default function TourCard({ tour }: { tour: Tour }) {
             )}
           </Text>
           <Text style={[s.body, { fontFamily: "InterSemi" }]}>
-            {t("From", "От", "Başlayan qiymət")} €{tour.fromPriceEur} /{" "}
+            {t("From", "От", "Başlayan qiymət")} {price(tour.fromPriceEur)} /{" "}
             {t("person", "чел.", "nəfər")}
           </Text>
         </View>
@@ -65,12 +65,11 @@ export default function TourCard({ tour }: { tour: Tour }) {
         }
         onPress={() => toggle(tour.slug)}
       >
-        <Feather
-          name="bookmark"
+        <Ionicons
+          name={marked ? "bookmark" : "bookmark-outline"}
           size={22}
           color={marked ? colors.accent : colors.ink}
         />
-        {marked && <View style={styles.dot} />}
       </Pressable>
     </View>
   );
@@ -88,14 +87,5 @@ const styles = StyleSheet.create({
     backgroundColor: colors.paper,
     alignItems: "center",
     justifyContent: "center",
-  },
-  dot: {
-    position: "absolute",
-    right: 5,
-    top: 5,
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: colors.accent,
   },
 });
