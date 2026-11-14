@@ -1,5 +1,5 @@
 import { useAccountLinkToken } from "../features/account/link-token";
-import { request } from "../api/client";
+import { ApiError, request } from "../api/client";
 import React, { useState } from "react";
 import { Text } from "react-native";
 import { useRouter } from "expo-router";
@@ -9,13 +9,15 @@ import { useDiscovery } from "../state/discovery";
 import {
   ErrorNotice,
   useProblem,
+  useResendCooldown,
 } from "../features/account/components";
 export default function Verify() {
   const token = useAccountLinkToken();
   const a = useAccount(),
     { t } = useDiscovery(),
     problem = useProblem(),
-    router = useRouter();
+    router = useRouter(),
+    cooldown = useResendCooldown();
   const [busy, setBusy] = useState(false),
     [done, setDone] = useState(false),
     [message, setMessage] = useState(""),
@@ -95,12 +97,13 @@ export default function Verify() {
         {a.customer && !a.customer.emailVerified && (
           <Button
             outline
-            disabled={busy}
+            disabled={busy || cooldown.seconds > 0}
             onPress={async () => {
               setBusy(true);
               setError("");
               try {
                 await a.call("auth/email-verification/request", {});
+                cooldown.start();
                 setMessage(
                   t(
                     "Verification email requested.",
@@ -108,14 +111,29 @@ export default function Verify() {
                     "Təsdiq emaili istənildi.",
                   ),
                 );
-              } catch {
-                setError(problem());
+              } catch (e) {
+                if (e instanceof ApiError && e.status === 429) {
+                  cooldown.start();
+                  setError(
+                    t(
+                      "A verification email was just sent. You can request another in a minute.",
+                      "Письмо только что отправлено. Новое можно запросить через минуту.",
+                      "Təsdiq emaili indicə göndərilib. Yenisini bir dəqiqədən sonra istəyə bilərsən.",
+                    ),
+                  );
+                } else setError(problem());
               } finally {
                 setBusy(false);
               }
             }}
           >
-            {t("Resend email", "Отправить повторно", "Yenidən göndər")}
+            {cooldown.seconds > 0
+              ? t(
+                  `Send again in ${cooldown.seconds} s`,
+                  `Повторно через ${cooldown.seconds} с`,
+                  `${cooldown.seconds} san. sonra yenidən göndər`,
+                )
+              : t("Resend email", "Отправить повторно", "Yenidən göndər")}
           </Button>
         )}
       </>

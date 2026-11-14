@@ -1,4 +1,4 @@
-import React, { type PropsWithChildren } from "react";
+import React, { useEffect, useState, type PropsWithChildren } from "react";
 import {
   Text,
   View,
@@ -70,6 +70,16 @@ export function ErrorNotice({ message }: { message: string }) {
       {message}
     </Text>
   ) : null;
+}
+/** Counts down after a verification email was requested so the button cannot be hammered. */
+export function useResendCooldown() {
+  const [seconds, setSeconds] = useState(0);
+  useEffect(() => {
+    if (seconds <= 0) return;
+    const timer = setTimeout(() => setSeconds((n) => n - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [seconds]);
+  return { seconds, start: () => setSeconds(60) };
 }
 export function useProblem() {
   const { t } = useDiscovery();

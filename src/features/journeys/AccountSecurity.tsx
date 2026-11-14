@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { colors, heading } from "../../design/theme";
-import { request, type Customer, type Locale } from "../../api/client";
+import { ApiError, request, type Customer, type Locale } from "../../api/client";
+import { useResendCooldown } from "../account/components";
 type Session = {
   id: string;
   device: string;
@@ -24,7 +25,8 @@ export default function AccountSecurity({
   const [sessions, setSessions] = useState<Session[]>([]),
     [busy, setBusy] = useState(false),
     [notice, setNotice] = useState(""),
-    [error, setError] = useState("");
+    [error, setError] = useState(""),
+    cooldown = useResendCooldown();
   const load = () =>
     request<Session[]>("auth/sessions", undefined, token).then(setSessions);
   useEffect(() => {
@@ -43,6 +45,7 @@ export default function AccountSecurity({
     setError("");
     try {
       await request(path, {}, token);
+      if (path.includes("verification")) cooldown.start();
       if (path === "auth/logout-all") await onSignedOut();
       else {
         await load();
@@ -60,7 +63,18 @@ export default function AccountSecurity({
               ),
         );
       }
-    } catch {
+    } catch (e) {
+      if (e instanceof ApiError && e.status === 429) {
+        cooldown.start();
+        setError(
+          t(
+            "A verification email was just sent. You can request another in a minute.",
+            "Письмо только что отправлено. Новое можно запросить через минуту.",
+            "Təsdiq emaili indicə göndərilib. Yenisini bir dəqiqədən sonra istəyə bilərsən.",
+          ),
+        );
+        return;
+      }
       setError(
         t(
           "Action unavailable. Try again later.",
@@ -72,10 +86,10 @@ export default function AccountSecurity({
       setBusy(false);
     }
   }
-  const button = (label: string, fn: () => void) => (
+  const button = (label: string, fn: () => void, locked = false) => (
     <Pressable
       accessibilityRole="button"
-      disabled={busy}
+      disabled={busy || locked}
       style={s.button}
       onPress={fn}
     >
@@ -98,12 +112,19 @@ export default function AccountSecurity({
       </Text>
       {!customer.emailVerified &&
         button(
-          t(
-            "Send verification email",
-            "Отправить письмо",
-            "Təsdiq emaili göndər",
-          ),
+          cooldown.seconds > 0
+            ? t(
+                `Send again in ${cooldown.seconds} s`,
+                `Повторно через ${cooldown.seconds} с`,
+                `${cooldown.seconds} san. sonra yenidən göndər`,
+              )
+            : t(
+                "Send verification email",
+                "Отправить письмо",
+                "Təsdiq emaili göndər",
+              ),
           () => void act("auth/email-verification/request"),
+          cooldown.seconds > 0,
         )}
       <Text style={s.title}>{t("Password", "Пароль", "Şifrə")}</Text>
       {button(
