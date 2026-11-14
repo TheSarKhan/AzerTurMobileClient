@@ -56,10 +56,28 @@ export default function Verify() {
                 await request("auth/verify-email", { token });
                 setDone(true);
                 setError("");
-                if (a.customer) await a.refresh();
-                setMessage(t("Email verified. Sign in to continue.", "Email подтверждён. Войдите, чтобы продолжить.", "Email təsdiqləndi. Davam etmək üçün daxil olun."));
-              } catch {
-                setError(problem());
+                setMessage(
+                  a.customer
+                    ? ""
+                    : t(
+                        "Email verified. Sign in to continue.",
+                        "Email подтверждён. Войдите, чтобы продолжить.",
+                        "Email təsdiqləndi. Davam etmək üçün daxil olun.",
+                      ),
+                );
+                if (a.customer) await a.refresh().catch(() => undefined);
+              } catch (e) {
+                // The link is single-use: a 4xx means it was already used or has expired.
+                if (e instanceof ApiError && e.status >= 400 && e.status < 500) {
+                  setDone(true);
+                  setError(
+                    t(
+                      "This link was already used or has expired. If you already confirmed your email, sign in. Otherwise request a new link.",
+                      "Ссылка уже использована или истекла. Если email уже подтверждён, войдите. Иначе запросите новую ссылку.",
+                      "Bu linkdən artıq istifadə olunub və ya vaxtı bitib. Email artıq təsdiqlənibsə, daxil ol. Əks halda yeni link istə.",
+                    ),
+                  );
+                } else setError(problem());
               } finally {
                 setBusy(false);
               }

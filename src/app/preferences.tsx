@@ -5,7 +5,7 @@ import { useDiscovery } from "../state/discovery";
 export default function Preferences() {
   const { t, locale, setLocale, currency, setCurrency } = useDiscovery();
   return (
-    <Page back title={t("Preferences", "Настройки", "Seçimlər")}>
+    <Page back title={t("Language and currency", "Язык и валюта", "Dil və valyuta")}>
       <Text style={s.title}>
         {t("Make it yours.", "По вашему вкусу.", "Sizə uyğun.")}
       </Text>

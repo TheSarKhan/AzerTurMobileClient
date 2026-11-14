@@ -15,7 +15,7 @@ import {
 } from "../../features/account/components";
 export default function Account() {
   const a = useAccount(),
-    { t, locale } = useDiscovery();
+    { t, locale, currency } = useDiscovery();
   const [busy, setBusy] = useState(false),
     [error, setError] = useState("");
   return (
@@ -89,15 +89,13 @@ export default function Account() {
             </Menu>
             <Menu>
               <Row
-                label={t("Language", "Язык", "Dil")}
-                value={
-                  { en: "English", ru: "Русский", az: "Azərbaycanca" }[locale]
-                }
+                label={t(
+                  "Language and currency",
+                  "Язык и валюта",
+                  "Dil və valyuta",
+                )}
+                value={`${{ en: "English", ru: "Русский", az: "Azərbaycanca" }[locale]} · ${currency}`}
                 onPress={() => router.push("/preferences")}
-              />
-              <Nav
-                to="/preferences"
-                label={t("Currency preferences", "Валюта", "Valyuta seçimi")}
               />
             </Menu>
             <Menu>
