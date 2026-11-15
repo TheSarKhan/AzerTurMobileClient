@@ -170,7 +170,7 @@ export default function Trip() {
                 ))}
               </>
             )}
-            {(finance?.services || offer?.services)?.map((x) => (
+            {(finance?.services || offer?.services)?.map((x, i, all) => (
               <View key={x.key} style={{ gap: 6 }}>
                 <View style={s.between}>
                   <Text style={s.body}>{x.name}</Text>
@@ -182,7 +182,10 @@ export default function Trip() {
                     )}
                   </Text>
                 </View>
-                <Text style={s.muted}>{x.policy}</Text>
+                {/* The same rule is not repeated under every service. */}
+                {x.policy && x.policy !== all[i - 1]?.policy && (
+                  <Text style={s.muted}>{x.policy}</Text>
+                )}
                 <View style={s.divider} />
               </View>
             ))}
