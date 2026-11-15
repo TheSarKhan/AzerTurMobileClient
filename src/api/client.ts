@@ -27,6 +27,8 @@ export interface Tour {
   days: number;
   fromPriceEur: number;
   image: string;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 export interface Quote {
   id: string;

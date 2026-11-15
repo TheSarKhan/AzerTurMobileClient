@@ -16,3 +16,5 @@ expo-env.d.ts
 /public/pdf.worker.min.mjs
 
 dist-production/
+
+/public/maplibre/
