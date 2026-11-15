@@ -5,7 +5,6 @@ import {
   Pressable,
   StyleSheet,
   ScrollView,
-  useWindowDimensions,
   type StyleProp,
   type ViewStyle,
 } from "react-native";
@@ -13,6 +12,7 @@ import Feather from "@expo/vector-icons/Feather";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { colors, heading } from "./theme";
+import { useViewportWidth } from "./PhoneFrame";
 export const s = StyleSheet.create({
   page: { flex: 1, backgroundColor: colors.paper },
   content: {
@@ -115,7 +115,7 @@ export function Page({
   /** Pinned under the scrolling content (e.g. a send button). */
   footer?: ReactNode;
 }>) {
-  const { width } = useWindowDimensions();
+  const width = useViewportWidth();
   const split = !!aside && width >= 900;
   const scroll = (
     <ScrollView

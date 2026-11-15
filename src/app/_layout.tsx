@@ -7,6 +7,7 @@ import { StatusBar } from "expo-status-bar";
 import { AccountProvider } from "../state/account";
 import { DiscoveryProvider } from "../state/discovery";
 import { colors } from "../design/theme";
+import { PhoneFrame } from "../design/PhoneFrame";
 export default function Root() {
   const [ready, error] = useFonts({
     Inter: require("../../assets/fonts/inter-400.ttf"),
@@ -35,12 +36,14 @@ export default function Root() {
     <DiscoveryProvider>
       <AccountProvider>
         <StatusBar style="dark" />
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor: colors.paper },
-          }}
-        />
+        <PhoneFrame>
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              contentStyle: { backgroundColor: colors.paper },
+            }}
+          />
+        </PhoneFrame>
       </AccountProvider>
     </DiscoveryProvider>
   );
