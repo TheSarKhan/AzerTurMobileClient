@@ -827,7 +827,7 @@ export default function MapBoard() {
           </Pressable>
         ) : (
           <Text pointerEvents="none" style={styles.credit}>
-            geoBoundaries · CC BY-SA 3.0
+            geoBoundaries, CC BY-SA 3.0
           </Text>
         )}
         {loading && (
