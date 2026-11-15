@@ -11,6 +11,7 @@ import {
 } from "../../features/account/components";
 import type { Booking } from "../../api/client";
 import { type Offer, tripGroup, slug } from "../../features/trips/model";
+import { tripStatus } from "../../features/trips/status";
 import { photo } from "../../features/explore/TourCard";
 import { colors } from "../../design/theme";
 export default function Trips() {
@@ -113,34 +114,11 @@ export default function Trips() {
                 {b.departure}, #{b.id.slice(0, 8)}
               </Text>
               <Text style={[s.body, { color: colors.accent }]}>
-                {offers.some((x) => x.bookingId === b.id) &&
-                b.status === "PENDING_REVIEW"
-                  ? t(
-                      "Offer ready — open journey",
-                      "Предложение готово — откройте поездку",
-                      "Təklif hazırdır — səfərə baxın",
-                    )
-                  : b.status === "PENDING_REVIEW"
-                    ? t(
-                        "Request under review",
-                        "Запрос на проверке",
-                        "Sorğu yoxlanılır",
-                      )
-                    : b.status === "CONFIRMED"
-                      ? t(
-                          "Confirmed journey",
-                          "Поездка подтверждена",
-                          "Səfər təsdiqlənib",
-                        )
-                      : b.status === "CANCELLED"
-                        ? t("Cancelled", "Отменено", "Ləğv edilib")
-                        : b.status === "REJECTED"
-                          ? t("Not approved", "Не одобрено", "Təsdiqlənməyib")
-                          : t(
-                              "Open journey for the next step",
-                              "Откройте поездку",
-                              "Növbəti addım üçün səfərə baxın",
-                            )}
+                {tripStatus(
+                  b,
+                  offers.some((x) => x.bookingId === b.id),
+                  t,
+                )}
               </Text>
               <View style={s.divider} />
               <Text style={s.body}>

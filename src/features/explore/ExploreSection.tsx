@@ -11,6 +11,7 @@ export default function ExploreSection({
   icon,
   note,
   action,
+  filters,
   snap,
   children,
 }: {
@@ -19,6 +20,8 @@ export default function ExploreSection({
   note?: string;
   /** Something tappable at the end of the header, such as "See all". */
   action?: React.ReactNode;
+  /** Rows of filter chips between the header and the scrolling row. */
+  filters?: React.ReactNode;
   /** Width of one item plus the gap, so a swipe settles on a whole item. */
   snap?: number;
   children: React.ReactNode;
@@ -33,6 +36,7 @@ export default function ExploreSection({
         {note && <Text style={styles.note}>{note}</Text>}
         {action}
       </View>
+      {filters}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}

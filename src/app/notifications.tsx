@@ -6,9 +6,9 @@ import { SignedIn } from "../features/account/components";
 import NotificationInbox from "../features/journeys/NotificationInbox";
 export default function Notifications() {
   const a = useAccount(),
-    { t, locale } = useDiscovery();
+    { locale } = useDiscovery();
   return (
-    <Page back title={t("Notifications", "Уведомления", "Bildirişlər")}>
+    <Page back>
       <SignedIn>
         {a.token && <NotificationInbox token={a.token} locale={locale} />}
       </SignedIn>

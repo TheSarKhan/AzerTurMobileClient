@@ -46,6 +46,14 @@ export const CATEGORIES = [
   "FAMILY",
   "OTHER",
 ] as const;
+/** How many events match, and how they split by category and by city (for the filter chips). */
+export type Facets = {
+  total: number;
+  categories: Record<string, number>;
+  cities: Record<string, number>;
+};
+export const getFacets = (query: URLSearchParams) =>
+  request<Facets>("events/facets?" + query.toString());
 export const getCities = () => request<City[]>("cities");
 export const getEvents = (query: URLSearchParams) =>
   request<EventPage>("events?" + query.toString());

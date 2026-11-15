@@ -55,3 +55,42 @@ export function tripGroup(b: Booking, standardDays = 1, now = Date.now()) {
     return 0;
   }
 }
+
+export type Highlight = {
+  booking: Booking;
+  kind: "offer" | "confirmed" | "request";
+  /** How many other journeys or requests are still open besides this one. */
+  more: number;
+};
+/**
+ * The one journey Explore points the customer to: an offer waiting for them first, then the next
+ * confirmed journey (soonest departure), then the newest request. Cancelled, rejected and past
+ * journeys are never highlighted.
+ */
+export function highlightTrip(
+  rows: Booking[],
+  offerBookingIds: string[],
+  daysOf: (b: Booking) => number,
+  now = Date.now(),
+): Highlight | null {
+  const open = rows.filter((b) => tripGroup(b, daysOf(b), now) !== 2);
+  if (!open.length) return null;
+  const offers = open.filter(
+    (b) => offerBookingIds.includes(b.id) && b.status === "PENDING_REVIEW",
+  );
+  const confirmed = open
+    .filter((b) => b.status === "CONFIRMED")
+    .sort((x, y) => x.departure.localeCompare(y.departure));
+  const requests = open
+    .filter((b) => b.status === "PENDING_REVIEW")
+    .sort((x, y) => y.createdAt.localeCompare(x.createdAt));
+  const pick: [Booking | undefined, Highlight["kind"]] = offers[0]
+    ? [offers[0], "offer"]
+    : confirmed[0]
+      ? [confirmed[0], "confirmed"]
+      : requests[0]
+        ? [requests[0], "request"]
+        : [open[0], "request"];
+  if (!pick[0]) return null;
+  return { booking: pick[0], kind: pick[1], more: open.length - 1 };
+}

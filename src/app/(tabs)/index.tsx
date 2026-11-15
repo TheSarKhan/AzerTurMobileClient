@@ -19,6 +19,8 @@ import FeaturedCard, {
   FEATURED_WIDTH,
 } from "../../features/explore/FeaturedCard";
 import EventsBlock from "../../features/explore/EventsBlock";
+import MyJourneyCard from "../../features/explore/MyJourneyCard";
+import NotificationBell from "../../features/explore/NotificationBell";
 import PlanBanner from "../../features/explore/PlanBanner";
 
 export default function Explore() {
@@ -42,7 +44,10 @@ export default function Explore() {
           </Text>
         </Pressable>
         <LanguageMenu />
+        <NotificationBell />
       </View>
+
+      <MyJourneyCard />
 
       <CategoryBar selected={selected} onSelect={setSelected} />
 
