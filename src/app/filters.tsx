@@ -5,44 +5,29 @@ import { router } from "expo-router";
 import { Page, Button, s } from "../design/ui";
 import { colors } from "../design/theme";
 import { rates, useDiscovery } from "../state/discovery";
+import { categoryList } from "../features/explore/categories";
 export default function Filters() {
-  const { t, filter, setFilter, currency } = useDiscovery();
+  const { t, locale, filter, setFilter, currency } = useDiscovery();
   const [draft, setDraft] = useState(filter),
     [max, setMax] = useState(
-      filter.max === null ? "" : String(Math.round(filter.max * rates[currency])),
+      filter.max === null
+        ? ""
+        : String(Math.round(filter.max * rates[currency])),
     ),
     [error, setError] = useState("");
   return (
     <Page back title={t("Filters", "Фильтры", "Filtrlər")}>
-      <Text style={s.h2}>{t("Regions", "Регионы", "Bölgələr")}</Text>
-      {(
-        [
-          {
-            id: "all",
-            label: t("All regions", "Все регионы", "Bütün bölgələr"),
-          },
-          {
-            id: "nature",
-            label: t(
-              "Mountains & nature",
-              "Горы и природа",
-              "Dağlar və təbiət",
-            ),
-          },
-          {
-            id: "culture",
-            label: t(
-              "Heritage cities",
-              "Исторические города",
-              "Tarixi şəhərlər",
-            ),
-          },
-          {
-            id: "city",
-            label: t("Baku & city", "Баку и город", "Bakı və şəhər"),
-          },
-        ] as const
-      ).map((x) => (
+      <Text style={s.h2}>{t("Categories", "Категории", "Kateqoriyalar")}</Text>
+      {[
+        {
+          id: "all" as const,
+          label: t("All categories", "Все категории", "Bütün kateqoriyalar"),
+        },
+        ...categoryList.map((c) => ({
+          id: c.id,
+          label: c.label[locale === "ru" ? 1 : locale === "az" ? 2 : 0],
+        })),
+      ].map((x) => (
         <Pressable
           accessibilityRole="radio"
           accessibilityState={{ checked: draft.region === x.id }}

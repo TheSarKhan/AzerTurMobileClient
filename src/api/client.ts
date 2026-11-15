@@ -29,6 +29,8 @@ export interface Tour {
   image: string;
   latitude?: number | null;
   longitude?: number | null;
+  /** History, culture, medical, nature, entertainment, business: the ones this journey belongs to. */
+  categories?: string[];
 }
 export interface Quote {
   id: string;

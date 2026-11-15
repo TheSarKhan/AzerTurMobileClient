@@ -7,7 +7,12 @@ import { useAccount } from "../state/account";
 import { Field, ErrorNotice } from "../features/account/components";
 import { AuthShowcase } from "../features/account/AuthShowcase";
 import { GoogleSignIn } from "../features/account/GoogleSignIn";
+import { authMessage } from "../features/account/auth-errors";
 import { ApiError, request } from "../api/client";
+// Google sign-in is switched off for now. Set to true to show the button again (the API must
+// also report a Google client ID).
+const SHOW_GOOGLE = false;
+
 export default function Auth() {
   const { t, locale } = useDiscovery(),
     a = useAccount();
@@ -16,7 +21,6 @@ export default function Auth() {
     [email, setEmail] = useState(""),
     [password, setPassword] = useState(""),
     [name, setName] = useState(""),
-    [phone, setPhone] = useState(""),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
     [sent, setSent] = useState(false);
@@ -33,23 +37,19 @@ export default function Auth() {
         await a.authenticate(register ? "register" : "login", {
           email: email.trim(),
           password,
-          ...(register ? { name: name.trim(), phone: phone.trim(), locale } : {}),
+          ...(register ? { name: name.trim(), locale } : {}),
         });
-        router.replace("/account");
+        router.replace("/");
       }
     } catch (e) {
       setError(
-        e instanceof ApiError && e.status === 429
-          ? t(
-              "Please wait before trying again.",
-              "Подождите перед повторной попыткой.",
-              "Yenidən cəhd etməzdən əvvəl gözləyin.",
-            )
-          : t(
-              "Check your email and password. Registration needs a name, a phone number and a 12–72 character password.",
-              "Проверьте email и пароль. Для регистрации нужны имя, телефон и пароль 12–72 символа.",
-              "Email və şifrəni yoxlayın. Qeydiyyat üçün ad, telefon və 12–72 simvolluq şifrə lazımdır.",
-            ),
+        authMessage(
+          e instanceof ApiError
+            ? { status: e.status, code: e.code }
+            : { status: null, code: "" },
+          register ? "register" : "login",
+          t,
+        ),
       );
     } finally {
       setBusy(false);
@@ -120,7 +120,7 @@ export default function Auth() {
         </Text>
       ) : (
         <>
-          {!recover && (
+          {SHOW_GOOGLE && !recover && (
             <GoogleSignIn
               disabled={busy}
               orLabel={t("or", "или", "və ya")}
@@ -144,7 +144,7 @@ export default function Auth() {
                 setError("");
                 try {
                   await a.authenticate("google", { credential, locale });
-                  router.replace("/account");
+                  router.replace("/");
                 } catch {
                   setError(
                     t(
@@ -178,17 +178,6 @@ export default function Auth() {
               autoComplete="email"
               maxLength={254}
             />
-            {register && !recover && (
-              <Field
-                label={t("Phone number", "Номер телефона", "Telefon nömrəsi")}
-                value={phone}
-                onChangeText={setPhone}
-                keyboardType="phone-pad"
-                autoComplete="tel"
-                maxLength={24}
-                placeholder="+994 50 123 45 67"
-              />
-            )}
             {!recover && (
               <Field
                 label={t("Password", "Пароль", "Şifrə")}
@@ -208,9 +197,7 @@ export default function Auth() {
               (!recover &&
                 (!password ||
                   (register &&
-                    (password.length < 12 ||
-                      name.trim().length < 2 ||
-                      phone.replace(/\D/g, "").length < 7))))
+                    (password.length < 12 || name.trim().length < 2))))
             }
             onPress={() => void submit()}
           >

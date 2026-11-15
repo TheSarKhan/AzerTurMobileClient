@@ -9,11 +9,12 @@ import React, {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { PlannerDraft } from "./planner";
 import { getTours, type Tour, type Locale, type Currency } from "../api/client";
+import { categoriesOf, type CategoryId } from "../features/explore/categories";
 /** Display rates relative to EUR, identical to the website. Charges keep their real currency. */
 export const rates: Record<Currency, number> = { EUR: 1, USD: 1.1, AZN: 1.87 };
 const symbols: Record<Currency, string> = { EUR: "€", USD: "$", AZN: "₼" };
 type Filter = {
-  region: "all" | "nature" | "culture" | "city";
+  region: "all" | CategoryId;
   duration: "all" | "1" | "2-3" | "4+";
   max: number | null;
 };
@@ -98,7 +99,9 @@ function useDiscoveryState() {
         : tour.titleEn;
   const price = (eur: number) => {
     const value = Math.round(eur * rates[currency]);
-    return currency === "EUR" ? symbols.EUR + value : value + " " + symbols[currency];
+    return currency === "EUR"
+      ? symbols.EUR + value
+      : value + " " + symbols[currency];
   };
   const toggle = (slug: string) =>
     setSaved((s) =>
@@ -139,11 +142,8 @@ export function useDiscovery() {
   if (!value) throw Error("Missing discovery provider");
   return value;
 }
-export function category(tour: Tour): Filter["region"] {
-  if (tour.slug.includes("baku")) return "city";
-  if (tour.slug.includes("sheki") || tour.slug.includes("gabala"))
-    return "culture";
-  return "nature";
+export function inCategory(tour: Tour, id: CategoryId) {
+  return categoriesOf(tour).includes(id);
 }
 export function matching(tour: Tour, query: string, filter: Filter) {
   const q = query.trim().toLocaleLowerCase();
@@ -152,7 +152,7 @@ export function matching(tour: Tour, query: string, filter: Filter) {
       [tour.titleEn, tour.titleRu, tour.titleAz, tour.region, tour.slug].some(
         (x) => x.toLocaleLowerCase().includes(q),
       )) &&
-    (filter.region === "all" || category(tour) === filter.region) &&
+    (filter.region === "all" || inCategory(tour, filter.region)) &&
     (filter.duration === "all" ||
       (filter.duration === "1"
         ? tour.days === 1

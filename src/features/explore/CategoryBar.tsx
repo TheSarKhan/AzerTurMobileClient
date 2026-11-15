@@ -4,10 +4,11 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useDiscovery } from "../../state/discovery";
 import { colors } from "../../design/theme";
 import ExploreSection from "./ExploreSection";
+import { categoriesOf, categoryList, type CategoryId } from "./categories";
 
-export type Category = "all" | "nature" | "culture" | "city";
+export type Category = "all" | CategoryId;
 
-/** Round icon buttons that filter the journeys. */
+/** Round icon buttons that filter the journeys: All, then every category the website has. */
 export default function CategoryBar({
   selected,
   onSelect,
@@ -15,28 +16,26 @@ export default function CategoryBar({
   selected: Category;
   onSelect: (value: Category) => void;
 }) {
-  const { t } = useDiscovery();
+  const { t, locale, tours } = useDiscovery();
+  const lang = locale === "ru" ? 1 : locale === "az" ? 2 : 0;
   const items: {
     key: Category;
     icon: React.ComponentProps<typeof Ionicons>["name"];
     label: string;
+    count: number;
   }[] = [
-    { key: "all", icon: "grid-outline", label: t("All", "Все", "Hamısı") },
     {
-      key: "nature",
-      icon: "leaf-outline",
-      label: t("Nature", "Природа", "Təbiət"),
+      key: "all",
+      icon: "grid-outline",
+      label: t("All", "Все", "Hamısı"),
+      count: tours.length,
     },
-    {
-      key: "culture",
-      icon: "library-outline",
-      label: t("Culture", "Культура", "Mədəniyyət"),
-    },
-    {
-      key: "city",
-      icon: "business-outline",
-      label: t("City", "Город", "Şəhər"),
-    },
+    ...categoryList.map((c) => ({
+      key: c.id,
+      icon: c.icon,
+      label: c.label[lang],
+      count: tours.filter((x) => categoriesOf(x).includes(c.id)).length,
+    })),
   ];
   return (
     <ExploreSection title={t("Categories", "Категории", "Kateqoriyalar")}>
@@ -58,9 +57,13 @@ export default function CategoryBar({
                 color={on ? colors.white : colors.ink}
               />
             </View>
-            <Text style={[styles.label, on && styles.labelOn]}>
+            <Text
+              numberOfLines={1}
+              style={[styles.label, on && styles.labelOn]}
+            >
               {item.label}
             </Text>
+            <Text style={styles.count}>{item.count}</Text>
           </Pressable>
         );
       })}
@@ -69,7 +72,7 @@ export default function CategoryBar({
 }
 
 const styles = StyleSheet.create({
-  item: { alignItems: "center", gap: 8, minWidth: 68, marginRight: 6 },
+  item: { alignItems: "center", gap: 4, minWidth: 84, marginRight: 4 },
   circle: {
     width: 64,
     height: 64,
@@ -83,4 +86,5 @@ const styles = StyleSheet.create({
   circleOn: { backgroundColor: colors.ink, borderColor: colors.ink },
   label: { fontFamily: "Inter", fontSize: 13, color: colors.muted },
   labelOn: { fontFamily: "InterSemi", color: colors.ink },
+  count: { fontFamily: "Inter", fontSize: 11, color: colors.muted },
 });

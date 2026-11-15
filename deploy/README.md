@@ -7,4 +7,4 @@ Run with loopback binding: `docker run -d --restart unless-stopped -p 127.0.0.1:
 
 The backend deployment workflow owns provisioning, database backup, compatibility validation, and rollout. Pin both source commits when dispatching it. The origin serves SPA fallback for Expo Router deep links and the matching PDF.js worker. API responses and private documents are never part of this static export.
 
-Web sessions are memory-only. Encrypted offline document storage and device push notifications belong to native iOS/Android builds; browser downloads require a customer action.
+Web sessions are kept in the browser's localStorage (refresh and new tabs stay signed in; the API expires them after 7 days and sign-out deletes them). Encrypted offline document storage and device push notifications belong to native iOS/Android builds; browser downloads require a customer action.

@@ -11,11 +11,13 @@ import Feather from "@expo/vector-icons/Feather";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Page, Button, s } from "../../design/ui";
 import { colors } from "../../design/theme";
-import { useDiscovery, category } from "../../state/discovery";
+import { useDiscovery, inCategory } from "../../state/discovery";
 import LanguageMenu from "../../features/explore/LanguageMenu";
 import CategoryBar, { type Category } from "../../features/explore/CategoryBar";
 import ExploreSection from "../../features/explore/ExploreSection";
-import FeaturedCard, { FEATURED_WIDTH } from "../../features/explore/FeaturedCard";
+import FeaturedCard, {
+  FEATURED_WIDTH,
+} from "../../features/explore/FeaturedCard";
 import EventsBlock from "../../features/explore/EventsBlock";
 import PlanBanner from "../../features/explore/PlanBanner";
 
@@ -23,7 +25,7 @@ export default function Explore() {
   const { t, tours, loading, error, load, storageError } = useDiscovery();
   const [selected, setSelected] = useState<Category>("all");
   const visible = tours.filter(
-    (x) => selected === "all" || category(x) === selected,
+    (x) => selected === "all" || inCategory(x, selected),
   );
   return (
     <Page>
