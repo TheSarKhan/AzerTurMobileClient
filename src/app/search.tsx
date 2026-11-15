@@ -51,7 +51,7 @@ export default function Search() {
         </Pressable>
       </View>
       {loading && <ActivityIndicator color={colors.ink} />}
-      {error && (
+      {!!error && (
         <Button onPress={() => void load()}>
           {t(
             "Could not load. Try again",

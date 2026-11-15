@@ -118,7 +118,7 @@ export default function Document() {
                   )}
                 </Text>
                 <Text style={s.body}>{documentStatus(doc.status, t)}</Text>
-                {doc.replacementId && (
+                {!!doc.replacementId && (
                   <Button
                     outline
                     onPress={() =>
@@ -145,7 +145,7 @@ export default function Document() {
               {new Date(doc.ends_at).toLocaleString(locale, {
                 timeZone: doc.timezone,
               })}{" "}
-             , {doc.timezone}
+              , {doc.timezone}
             </Text>
             <Text style={s.muted}>
               {t("Last checked", "Последняя проверка", "Son yoxlanma")}:{" "}
@@ -166,7 +166,7 @@ export default function Document() {
             {!!doc.instructions && (
               <Text style={s.body}>{doc.instructions}</Text>
             )}
-            {bytes && (
+            {!!bytes && (
               <SecurePreview
                 bytes={bytes}
                 mime={doc.mime}
@@ -181,7 +181,7 @@ export default function Document() {
                 "Təchizatçının faylı, orijinal QR və ya barkod daxil olmaqla dəyişdirilmədən göstərilir.",
               )}
             </Text>
-            {bytes && (
+            {!!bytes && (
               <>
                 <Button
                   outline

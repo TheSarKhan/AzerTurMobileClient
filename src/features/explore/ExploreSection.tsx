@@ -33,7 +33,7 @@ export default function ExploreSection({
         <Text accessibilityRole="header" style={styles.title}>
           {title}
         </Text>
-        {note && <Text style={styles.note}>{note}</Text>}
+        {!!note && <Text style={styles.note}>{note}</Text>}
         {action}
       </View>
       {filters}

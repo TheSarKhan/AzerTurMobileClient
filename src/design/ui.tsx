@@ -145,7 +145,7 @@ export function Page({
               <Feather name="arrow-left" size={23} color={colors.ink} />
             </Pressable>
           )}
-          {title && (
+          {!!title && (
             <Text style={[s.body, { fontFamily: "InterSemi" }]}>{title}</Text>
           )}
         </View>

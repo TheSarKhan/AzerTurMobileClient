@@ -94,3 +94,36 @@ export function highlightTrip(
   if (!pick[0]) return null;
   return { booking: pick[0], kind: pick[1], more: open.length - 1 };
 }
+
+/**
+ * Before the office has made an offer the customer sees estimates, not exact figures: a range of
+ * about 10% either side, rounded to whole tens, so it reads as "around" and never as a quote.
+ */
+export function estimateRange(value: number): [number, number] {
+  if (!(value > 0)) return [0, 0];
+  return [
+    Math.floor((value * 0.9) / 10) * 10,
+    Math.ceil((value * 1.1) / 10) * 10,
+  ];
+}
+export function moneyRange(range: [number, number], c: string, l: string) {
+  const f = new Intl.NumberFormat(
+    l === "az" ? "az-AZ" : l === "ru" ? "ru-RU" : "en-GB",
+    { style: "currency", currency: c, maximumFractionDigits: 0 },
+  );
+  return f.format(range[0]) + " – " + f.format(range[1]);
+}
+/** Readable names for the service lines of a quote (the API sends keys such as "transport"). */
+const serviceNames: Record<string, [string, string, string]> = {
+  transport: ["Transport", "Транспорт", "Nəqliyyat"],
+  driver: ["Private driver", "Личный водитель", "Şəxsi sürücü"],
+  hotel: ["Stay", "Жильё", "Qalma yeri"],
+  stay: ["Stay", "Жильё", "Qalma yeri"],
+  guide: ["Guide", "Гид", "Bələdçi"],
+  transfer: ["Transfer", "Трансфер", "Transfer"],
+  activity: ["Experiences", "Впечатления", "Təcrübələr"],
+};
+export function serviceName(key: string, fallback: string, l: string) {
+  const names = serviceNames[key.toLowerCase()];
+  return names ? names[l === "az" ? 2 : l === "ru" ? 1 : 0] : fallback;
+}

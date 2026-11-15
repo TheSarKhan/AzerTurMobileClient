@@ -33,9 +33,9 @@ export default function Layout() {
             icon: "compass",
           },
           {
-            name: "trips",
-            title: t("My trips", "Поездки", "Səfərlərim"),
-            icon: "briefcase",
+            name: "events",
+            title: t("Events", "События", "Tədbirlər"),
+            icon: "calendar",
           },
           {
             name: "map",
@@ -43,9 +43,9 @@ export default function Layout() {
             icon: "map",
           },
           {
-            name: "saved",
-            title: t("Saved", "Сохранено", "Seçilmişlər"),
-            icon: "bookmark",
+            name: "trips",
+            title: t("My trips", "Поездки", "Səfərlərim"),
+            icon: "briefcase",
           },
           {
             name: "account",

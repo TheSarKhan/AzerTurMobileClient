@@ -1,15 +1,15 @@
 import React from "react";
 import { Text, ActivityIndicator } from "react-native";
 import { router } from "expo-router";
-import { Page, Button, s } from "../../design/ui";
-import { colors } from "../../design/theme";
-import { useDiscovery } from "../../state/discovery";
-import TourCard from "../../features/explore/TourCard";
+import { Page, Button, s } from "../design/ui";
+import { colors } from "../design/theme";
+import { useDiscovery } from "../state/discovery";
+import TourCard from "../features/explore/TourCard";
 export default function Saved() {
   const { t, saved, tours, loading, error, load } = useDiscovery();
   const items = tours.filter((x) => saved.includes(x.slug));
   return (
-    <Page>
+    <Page back>
       <Text style={s.title}>
         {t("Saved journeys", "Сохранённые поездки", "Seçilmiş səfərlər")}
       </Text>

@@ -61,3 +61,23 @@ test("cancelled, rejected and finished journeys are never highlighted", () => {
   assert.equal(highlightTrip(rows, [], () => 1, now), null);
   assert.equal(highlightTrip([], [], () => 1, now), null);
 });
+const { estimateRange, moneyRange, serviceName } = load("src/features/trips/model.ts");
+test("an estimate is a range of about 10% either side, in whole tens", () => {
+  assert.deepEqual(estimateRange(270), [240, 300]);
+  assert.deepEqual(estimateRange(685), [610, 760]);
+  assert.deepEqual(estimateRange(0), [0, 0]);
+  const [lo, hi] = estimateRange(412.5);
+  assert.ok(lo % 10 === 0 && hi % 10 === 0 && lo < 412.5 && hi > 412.5);
+});
+test("a range is written with both ends and no cents", () => {
+  const text = moneyRange([240, 300], "EUR", "en");
+  assert.match(text, /240/);
+  assert.match(text, /300/);
+  assert.doesNotMatch(text, /\.\d\d/);
+});
+test("service keys get a readable name in each language, unknown ones keep theirs", () => {
+  assert.equal(serviceName("transport", "x", "en"), "Transport");
+  assert.equal(serviceName("hotel", "x", "az"), "Qalma yeri");
+  assert.equal(serviceName("guide", "x", "ru"), "Гид");
+  assert.equal(serviceName("Something", "Kept name", "en"), "Kept name");
+});

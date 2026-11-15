@@ -20,12 +20,7 @@ import {
   toStops,
   withoutStop,
 } from "../features/journeys/route";
-import {
-  request,
-  type Quote,
-  type Booking,
-  ApiError,
-} from "../api/client";
+import { request, type Quote, type Booking, ApiError } from "../api/client";
 
 type Services = {
   driver: boolean;
@@ -53,16 +48,43 @@ const label = {
 };
 
 export default function Builder() {
-  const { slug: initialSlug } = useLocalSearchParams<{ slug?: string }>(),
+  const {
+      slug: initialSlug,
+      cities: cityParam,
+      services: serviceParam,
+    } = useLocalSearchParams<{
+      slug?: string;
+      cities?: string;
+      services?: string;
+    }>(),
     { t, locale, tours, planner, setPlanner, currency } = useDiscovery(),
     a = useAccount(),
     problem = useProblem();
+  // Places and services picked on Explore come in as parameters and replace an older draft.
+  const pickedCities = (cityParam || "")
+    .split(",")
+    .filter((c, i, all) => places[c] && all.indexOf(c) === i)
+    .slice(0, MAX_DAYS);
+  const pickedServices: Services | null = serviceParam
+    ? {
+        driver: serviceParam.split(",").includes("driver"),
+        stay: serviceParam.split(",").includes("stay"),
+        guide: serviceParam.split(",").includes("guide"),
+        transfer: serviceParam.split(",").includes("transfer"),
+        activity: serviceParam.split(",").includes("activity"),
+      }
+    : null;
+  const fromExplore = pickedCities.length > 0 || !!pickedServices;
   const draft =
-    planner && (!initialSlug || planner.slug === initialSlug) ? planner : null;
+    !fromExplore && planner && (!initialSlug || planner.slug === initialSlug)
+      ? planner
+      : null;
   const idx = locale === "az" ? 2 : locale === "ru" ? 1 : 0;
   const cityName = (city: string) => places[city]?.name[idx] ?? city;
   const [cities, setCities] = useState(
-      draft?.cities || templates[initialSlug || ""] || ["Quba", "Khinalug"],
+      draft?.cities ||
+        (pickedCities.length ? pickedCities : null) ||
+        templates[initialSlug || ""] || ["Quba", "Khinalug"],
     ),
     [date, setDate] = useState(
       () =>
@@ -77,13 +99,14 @@ export default function Builder() {
       draft?.guideLanguage || locale,
     ),
     [services, setServices] = useState<Services>(
-      draft?.services || {
-        driver: true,
-        stay: true,
-        guide: true,
-        transfer: false,
-        activity: false,
-      },
+      draft?.services ||
+        pickedServices || {
+          driver: true,
+          stay: true,
+          guide: true,
+          transfer: false,
+          activity: false,
+        },
     ),
     [note, setNote] = useState(""),
     [busy, setBusy] = useState(false),

@@ -18,6 +18,9 @@ import {
   type Payment,
   slug,
   money,
+  estimateRange,
+  moneyRange,
+  serviceName,
 } from "../../features/trips/model";
 import { photo } from "../../features/explore/TourCard";
 import type { Cancellation } from "../../features/trips/changes";
@@ -71,6 +74,10 @@ export default function Trip() {
       ? offer.services.reduce((sum, x) => sum + x.total, 0)
       : booking?.total || 0;
   const applied = finance ? finance.allocatableMinor / 100 : paid;
+  // No offer and no contract yet: the figures are an estimate, shown as ranges.
+  const lines = finance?.services || offer?.services || [];
+  const estimated = !offer && !contract;
+  const currency = offer?.currency || booking?.currency || "EUR";
   return (
     <Page back title={t("Your journey", "Ваша поездка", "Səfəriniz")}>
       <SignedIn>
@@ -170,63 +177,101 @@ export default function Trip() {
                 ))}
               </>
             )}
-            {(finance?.services || offer?.services)?.map((x, i, all) => (
+            {estimated && lines.length > 0 && (
+              <Text style={s.h2}>
+                {t(
+                  "Estimated prices",
+                  "Ориентировочные цены",
+                  "Təxmini qiymətlər",
+                )}
+              </Text>
+            )}
+            {lines.map((x, i, all) => (
               <View key={x.key} style={{ gap: 6 }}>
                 <View style={s.between}>
-                  <Text style={s.body}>{x.name}</Text>
                   <Text style={s.body}>
-                    {money(
-                      x.total,
-                      offer?.currency || booking.currency,
-                      locale,
-                    )}
+                    {estimated ? serviceName(x.key, x.name, locale) : x.name}
+                  </Text>
+                  <Text style={s.body}>
+                    {estimated
+                      ? moneyRange(estimateRange(x.total), currency, locale)
+                      : money(x.total, currency, locale)}
                   </Text>
                 </View>
                 {/* The same rule is not repeated under every service. */}
-                {x.policy && x.policy !== all[i - 1]?.policy && (
-                  <Text style={s.muted}>{x.policy}</Text>
-                )}
+                {!estimated &&
+                  !!x.policy &&
+                  x.policy !== all[i - 1]?.policy && (
+                    <Text style={s.muted}>{x.policy}</Text>
+                  )}
                 <View style={s.divider} />
               </View>
             ))}
-            <Menu>
-              {[
-                [
-                  t("Active services", "Действующие услуги", "Aktiv xidmətlər"),
-                  total,
-                ],
-                [
-                  t(
-                    "Applied funds",
-                    "Зачтённые средства",
-                    "Tətbiq edilmiş vəsait",
-                  ),
-                  applied,
-                ],
-                [
-                  t("Remaining", "Остаток", "Qalıq"),
-                  Math.max(0, total - applied),
-                ],
-              ].map(([label, n]) => (
-                <View key={String(label)} style={[s.between, { padding: 16 }]}>
-                  <Text style={[s.body, { flex: 1 }]}>{label}</Text>
-                  <Text style={s.body}>
-                    {money(
-                      Number(n),
-                      offer?.currency || booking.currency,
-                      locale,
-                    )}
-                  </Text>
-                </View>
-              ))}
-            </Menu>
-            <Text style={s.muted}>
-              {t(
-                "Only server-confirmed payments count. Cancellation and change adjustments are shown separately.",
-                "Учитываются подтверждённые оплаты. Корректировки отмен и изменений показаны отдельно.",
-                "Yalnız serverin təsdiqlədiyi ödənişlər sayılır. Ləğv və dəyişiklik düzəlişləri ayrıca göstərilir.",
-              )}
-            </Text>
+            {estimated ? (
+              <View style={[s.card, { padding: 18, gap: 8 }]}>
+                <Text style={s.muted}>
+                  {t(
+                    "Estimated total",
+                    "Ориентировочная сумма",
+                    "Təxmini cəmi",
+                  )}
+                </Text>
+                <Text style={s.h2}>
+                  {moneyRange(estimateRange(total), currency, locale)}
+                </Text>
+                <Text style={s.muted}>
+                  {t(
+                    "This is an estimate from your choices, not an offer. The office confirms availability and sends an offer with exact prices. You pay nothing now.",
+                    "Это ориентир по вашему выбору, а не предложение. Офис подтвердит наличие и пришлёт предложение с точными ценами. Сейчас платить ничего не нужно.",
+                    "Bu, seçimlərinə görə təxmini rəqəmdir, təklif deyil. Ofis mövcudluğu təsdiqləyib dəqiq qiymətlərlə təklif göndərəcək. İndi heç nə ödəmirsən.",
+                  )}
+                </Text>
+              </View>
+            ) : (
+              <>
+                <Menu>
+                  {[
+                    [
+                      t(
+                        "Active services",
+                        "Действующие услуги",
+                        "Aktiv xidmətlər",
+                      ),
+                      total,
+                    ],
+                    [
+                      t(
+                        "Applied funds",
+                        "Зачтённые средства",
+                        "Tətbiq edilmiş vəsait",
+                      ),
+                      applied,
+                    ],
+                    [
+                      t("Remaining", "Остаток", "Qalıq"),
+                      Math.max(0, total - applied),
+                    ],
+                  ].map(([label, n]) => (
+                    <View
+                      key={String(label)}
+                      style={[s.between, { padding: 16 }]}
+                    >
+                      <Text style={[s.body, { flex: 1 }]}>{label}</Text>
+                      <Text style={s.body}>
+                        {money(Number(n), currency, locale)}
+                      </Text>
+                    </View>
+                  ))}
+                </Menu>
+                <Text style={s.muted}>
+                  {t(
+                    "Only server-confirmed payments count. Cancellation and change adjustments are shown separately.",
+                    "Учитываются подтверждённые оплаты. Корректировки отмен и изменений показаны отдельно.",
+                    "Yalnız serverin təsdiqlədiyi ödənişlər sayılır. Ləğv və dəyişiklik düzəlişləri ayrıca göstərilir.",
+                  )}
+                </Text>
+              </>
+            )}
             <Menu>
               <Row
                 label={t(
