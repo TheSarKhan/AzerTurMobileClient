@@ -19,9 +19,9 @@ export function useLocate() {
       if (permission.status !== "granted") {
         setNote(
           t(
-            "Location is off. Pick a city instead.",
-            "Геолокация выключена. Выберите город.",
-            "Məkan icazəsi yoxdur. Şəhər seçin.",
+            "Location access is off. Allow it in your settings, or pick a city instead.",
+            "Доступ к местоположению выключен. Разрешите его в настройках или выберите город.",
+            "Məkan icazəsi bağlıdır. Parametrlərdən icazə verin və ya şəhər seçin.",
           ),
         );
         return null;
@@ -36,9 +36,9 @@ export function useLocate() {
     } catch {
       setNote(
         t(
-          "We could not find your location. Pick a city instead.",
-          "Не удалось определить местоположение. Выберите город.",
-          "Məkanı tapa bilmədik. Şəhər seçin.",
+          "We could not find your location. Try again, or pick a city instead.",
+          "Не удалось определить местоположение. Повторите попытку или выберите город.",
+          "Məkanı tapa bilmədik. Yenidən cəhd edin və ya şəhər seçin.",
         ),
       );
       return null;

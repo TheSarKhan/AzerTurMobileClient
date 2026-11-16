@@ -103,7 +103,7 @@ export default function MapBoard() {
   const [chosen, setChosen] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<{ group: Cluster; page: number } | null>(null);
   const [location, setLocation] = useState<{ x: number; y: number } | null>(null);
-  const [locationMessage, setLocationMessage] = useState(false);
+  const [locationMessage, setLocationMessage] = useState<"" | "off" | "failed">("");
   const [locating, setLocating] = useState(false);
   const initialCenter = useRef(false);
   const interacted = useRef(false);
@@ -298,17 +298,20 @@ export default function MapBoard() {
 
   async function locate(showError = true) {
     setLocating(true);
-    setLocationMessage(false);
+    setLocationMessage("");
     try {
       const permission = await Location.requestForegroundPermissionsAsync();
-      if (permission.status !== "granted") throw new Error("Location unavailable");
+      if (permission.status !== "granted") {
+        setLocationMessage("off");
+        return null;
+      }
       const here = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Low });
       const point = project(here.coords.latitude, here.coords.longitude);
       if (!insideMap(point)) throw new Error("Location outside the map");
       setLocation(point);
       return point;
     } catch {
-      setLocationMessage(showError);
+      if (showError) setLocationMessage("failed");
       return null;
     } finally {
       setLocating(false);
@@ -880,13 +883,19 @@ export default function MapBoard() {
             {t("Some events could not load.", "Не все события загрузились.", "Bəzi tədbirləri yükləmək olmadı.")}
           </Text>
         )}
-        {locationMessage && (
+        {!!locationMessage && (
           <Text style={styles.empty}>
-            {t(
-              "Location unavailable. Explore the map or try again.",
-              "Местоположение недоступно. Изучите карту или повторите попытку.",
-              "Məkan əlçatan deyil. Xəritəyə baxın və ya yenidən cəhd edin.",
-            )}
+            {locationMessage === "off"
+              ? t(
+                  "Location access is off. Allow it in your browser or device settings, then tap the locate button again.",
+                  "Доступ к местоположению выключен. Разрешите его в настройках браузера или устройства и нажмите кнопку снова.",
+                  "Məkan icazəsi bağlıdır. Brauzer və ya cihaz parametrlərində icazə verib yenidən düyməyə toxunun.",
+                )
+              : t(
+                  "We could not find your location. Explore the map or try again.",
+                  "Не удалось определить местоположение. Изучите карту или повторите попытку.",
+                  "Məkanı tapa bilmədik. Xəritəyə baxın və ya yenidən cəhd edin.",
+                )}
           </Text>
         )}
 
